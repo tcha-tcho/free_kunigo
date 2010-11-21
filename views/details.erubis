@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<div id="details">
+	<% if @he_can_see %>
+		<div class="ui-state-default" style="font-size:80%;padding:10px">
+			<%= t.details.url_image_label %>
+			<input type="text" value="<%== @kuni.image %>" id="url_image">
+			<input type='button' value='<%= t.details.url_image %>' id='change_image'>
+			<br><br>
+			<%= t.details.save_tags_label %>
+			<input type="text" value="<%== @kuni.tags.join(',') %>" id="tags">
+			<input type='button' value='<%= t.details.save_tags %>' id='update_tags'>
+		</div>
+	<% end %>
+	<br>
+	<div <%= "style='display: none;'" if !@he_can_see %>>
+		<div class="btn bold" title="bold"></div><div class="btn italic"></div><div class="btn underline"></div><div class="btn link"></div><div class="btn quote"></div>
+		<div class="btn code"></div><div class="btn image"></div><div class="btn usize"></div><div class="btn dsize"></div><div class="btn nlist"></div>
+		<div class="btn blist"></div><div class="btn litem"></div><div class="btn back"></div><div class="btn forward"></div>
+		<div>
+			<textarea name="bbcode" id="text_details" rows="10" style="width:97%;"><%== @kuni.details %></textarea>
+		</div>
+	</div>
+	<% if @he_can_see %>
+	<input type='button' value='<%= t.details.save %>' id='save_details'><div class='preview_title'>PREVIEW</div>
+	<% end %>
+	<div class="preview"></div>
+</div>
+</body></html>

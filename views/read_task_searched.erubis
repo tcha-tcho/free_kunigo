@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<div id="all_title" class="searchedTheme" style="background:url(./img/task_<%= @task_image %>.png) no-repeat top right;">
+	<div id="v<%= @task.kuni_id %>" class="idea_subject_viewer">
+		<div id="v<%= @task.id %>" class="idea_title_viewer">
+			<h2><%== @task.title %><span></span></h2>
+		</div>
+	</div>
+<div style="font-size:60%;">
+	<hr>
+	<a id="goto<%= @task.kuni_id %>" class="go_to_original"><%= t.solutions.go_to_original %></a>
+	<div class="solutions ui-tabs-panel" style="overflow:auto;">
+		<% if !@solutions.nil? %>
+			<% @solutions.each do |solution| %>
+			<div id="ss<%= solution.id %>" class="solution_line">
+				<div class="solution_author_this<%= 'not' if !solution.solve %>solve"><%== solution.included_by %> <span class="timestamps"><%= solution.created_at %></span></div>
+				<div class="solution_message"><%== solution.message %></div>
+				<div class="solution_links">
+					<% solution.links.each do |link| %>
+						&bull;&nbsp;<a href="<%== link %>" target="_blank"><%== link %></a><br>
+					<% end %>
+				</div>
+			</div>
+			<% end %>
+		<% end %>
+	</div>
+</div>
+</body></html>

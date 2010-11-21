@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<div class="idea_subject_viewer" id="empty"></div>
+<div>
+	<div id="emptyviewer"><%= t.empty_lists.viewer %></div>
+	<br><br><br><br><br>
+	<div class="open_by_id">
+		<div class="open_by_id_label">
+			<%= t.empty_lists.open_with_id %>
+		</div>
+		<div>
+			<span class="fields">
+				<input id="kuni_id" name="kuni_id" type="text" value="" />&nbsp;
+				<input id="send_search_id" type="submit" value="<%= t.empty_lists.go_view %>! &rarr;">
+			</span>
+		</div>
+	</div><br><br>
+	<div id="tipcontainer">
+	</div>
+</div>
+</body></html>

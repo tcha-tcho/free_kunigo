@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<div id="network">
+	<% if !@syncheds.nil? %>
+		<% @syncheds.each do |synched_kuni| %>
+		<div id="sync<%= synched_kuni.id %>" class="network_line">
+			<div class="network_kuni_<%= 'not' if synched_kuni.cache < 100 %>solved<%= '_template' if synched_kuni.template %>">
+				<span class="timestamps_style">
+					<%= t.details.created_at %>
+				</span>
+				<span class="timestamps">
+					<%= synched_kuni.created_at %>
+				</span><br>
+				<%== synched_kuni.title %>
+			</div>
+		</div>
+		<% end %>
+	<% else %>
+		<div class="alert" style="font-size:150%;"><%= t.network.nobody %></div>
+	<% end %>
+	<br><br>
+</div>
+</body></html>

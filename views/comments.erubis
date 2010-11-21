@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+
+<div id="comments">
+	<div id="commentaries" style="position: relative;">
+		<% if !@guest %>
+			<% if !@kuni.comments_closed %>
+			
+			<div class="solution_form">
+				<div>
+					<div class="btn bold" title="bold"></div><div class="btn italic"></div><div class="btn underline"></div><div class="btn link"></div><div class="btn quote"></div>
+					<div class="btn code"></div><div class="btn image"></div><div class="btn usize"></div><div class="btn dsize"></div><div class="btn nlist"></div>
+					<div class="btn blist"></div><div class="btn back"></div><div class="btn forward"></div>
+					<div>
+						<textarea name="bbcode" id="commentary" rows="3" style="width:97%;"></textarea>
+					</div>
+				</div>
+				<div id="send_commentary" class="button">
+					<div id="unlock-slider-wrapper" class="ui-state-default ui-corner-all">
+	        			<div id="unlock-slider"><div id="unlock-handle"></div></div><div id="unlock-text"><%= t.comments.send_commentary %></div>
+						<div class="token"><%= session[:token] %></div>
+	        		</div>
+	        	</div>
+				<div class="preview" style="margin-top:10px;font-size:120%;"></div>
+			</div>			
+			
+			<% else %>
+				<br><strong><%= t.comments.comments_closed %></strong><br><br>
+			<% end %>
+			<% if @owner == @user_name %>
+				<input type="checkbox" class="close_comments"<%= 'checked' if @kuni.comments_closed %>> <%= t.comments.close %><br>
+			<% end %>
+		<% else %>
+			<%= t.messages.not_user %>
+		<% end %>
+		<% if !@comments.nil? %>
+			<% @comments.each do |comment| %>
+			<div id="cc<%= comment.id %>" class="comment<%= '_own' if @owner == comment.included_by %>">
+				<% if @user_name == comment.included_by or @owner == @user_name %>
+					<input type="button" class="exclude_comment" value="<%= t.comments.exlude_comment %>" id="c<%= comment.id %>">
+				<% end %>
+				<div class="author"><%== comment.included_by %></div>
+				<div class="timestamps"><%= comment.created_at %></div>
+				<div class="text_comment"><%== comment.message %></div>
+			</div>
+			<% end %>
+		<% end %>
+	</div>
+</div>
+</body></html>

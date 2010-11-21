@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<div id="all_title" class="myTheme" style="background:url(./img/user_my_thumb.gif) no-repeat top right;">
+	<div id="v<%= @user.id %>" class="idea_subject_viewer">
+		<span class="idea_category_viewer"><%= t.messages.since %>  <span class="timestamps" style="font-size:105%;"><%= @user.created_at %></span></span>
+	</div><br><br>
+	<div class="idea_title_viewer" style="margin-bottom:20px;">
+		<h1 style="color:black;"><%== @user.name %><span></span></h1>
+	</div>
+	<div id="commentaries">
+		<div class="ui-state-default" style="padding:20px;">
+			<input type="button" value="<%= t.read_kuni.close %>" id="close_user_info">
+			<h4 style="color:black;"><%= t.user.label_pass %></h4>
+			<span class="details_user"><%= t.user.actual_pass %></span><br>
+			<input type="password" id="actual_password"><br>
+			<span class="details_user"><%= t.user.new_pass %></span><br>
+			<input type="password" id="new_password"><br>
+			<span class="details_user"><%= t.user.confirm_pass %></span><br>
+			<input type="password" id="new_password_confirm"><br>
+			<input type="button" value="<%= t.user.change %>" id="send_change_password"><br><br><br>
+
+			<h4 style="color:black;"><%= t.user.label_mail %></h4>
+			<span class="details_user"><%= t.user.change_email %></span><br>
+			<div class="link_container"><input type="text" value="<%= @user.email %>" id="new_email"><span class="status"></span></div><br>
+			<input type="button" value="<%= t.user.change %>" id="send_new_email">
+		</div>
+		
+		<br>
+		<div class="user_box">
+			<div class="number_user"><%= @public_kunis %></div>
+			<div class="label_user"><%= t.user.public_kunis %></div>
+		</div>
+		<div class="user_box">
+			<div class="number_user"><%= @solutions_solved %></div>
+			<div class="label_user"><%= t.user.solutions_solved %></div>
+		</div>
+		<div class="user_box">
+			<div class="number_user"><%= @listed %></div>
+			<div class="label_user"><%= t.user.listed %></div>
+		</div>
+		<div class="user_box">
+			<div class="number_user"><span class="timestamps" style="font-size:55%;color:black;"><%= @last_login %></span></div>
+			<div class="label_user"><%= t.user.last_login %></div>
+		</div>
+		<br><br><br>
+	</div>
+</div>
+</body></html>

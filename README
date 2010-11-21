@@ -1,0 +1,116 @@
+O Kunigo is a website created at feb/2010 that was build to crowd sourcing your projects. The main feature its let the users share tasks between projects (here called kunis). This sharing let you sync parts of your project with others projects with no pain. Using mongodb and sinatra the website could be used as base for your own website ideas.
+
+This is the first version of the site. You can test this at: http://www.kunigo.com
+
+Regards!!
+
+
+
+
+ISSUES:
+-enviar email para quem esqueceu a senha
+-o user info está sem scroll
+-colocar o link no read_user_searched
+-paginas na home estão sem scroll
+
+REQUEST FEATURES:
+-refazer o tutorial (video)
+-visitação pública do perfil - OK
+-visitação pública dos kunis - OK
+-convites para acessar perfil público
+-descrição do usuário
+-history no browser
+-ordenar kunis
+-ordenar tarefas
+-paper contendo todo o kuni (para imprimir o projeto)
+-encrypted kunis
+-customização da aparência dos kunis - OK
+-tradução do site para outras línguas - internacionalização pronta
+-criação de sistema para automaticamente traduzir todos os textos em 26 línguas
+
+NEXT FEATURES
+
+EMPACOTAR O SITE
+<script src="javascripts/opened/jquery-1.3.2.min.js" type="text/javascript"></script>
+<script src="javascripts/opened/jquery-ui-1.7.2.custom.min.js" type="text/javascript"></script>
+<script src="javascripts/opened/jquery.mousewheel.min.js" type="text/javascript"></script>
+<script src="javascripts/opened/iscroll.js" type="text/javascript"></script>
+<script src="javascripts/opened/jquery.scrollTo-min.js" type="text/javascript"></script>
+<script src="javascripts/opened/jquery.fcbkcomplete.js" type="text/javascript"></script>
+<script src="javascripts/opened/jquery.cuteTime.min.js" type="text/javascript"></script>
+<script src="javascripts/opened/jquery.bbcodeeditor-1.0.js" type="text/javascript"></script>
+<script src="javascripts/opened/jquery.dynacloud-5.js" type="text/javascript"></script>
+
+// ==ClosureCompiler==
+// @output_file_name bundle.js
+// @compilation_level SIMPLE_OPTIMIZATIONS
+// @code_url https://www.kunigo.com/javascripts/opened/jquery-1.3.2.min.js
+// @code_url https://www.kunigo.com/javascripts/opened/jquery-ui-1.7.2.custom.min.js
+// @code_url https://www.kunigo.com/javascripts/opened/jquery.mousewheel.min.js
+// @code_url https://www.kunigo.com/javascripts/opened/iscroll.js
+// @code_url https://www.kunigo.com/javascripts/opened/jquery.scrollTo-min.js
+// @code_url https://www.kunigo.com/javascripts/opened/jquery.fcbkcomplete.js
+// @code_url https://www.kunigo.com/javascripts/opened/jquery.cuteTime.min.js
+// @code_url https://www.kunigo.com/javascripts/opened/jquery.bbcodeeditor-1.0.js
+// @code_url https://www.kunigo.com/javascripts/opened/jquery.dynacloud-5.js
+// ==/ClosureCompiler==
+
+
+BADGES PARA KUNIGO
+>> Mais presente no sistema (logs diarios)
+>> Presente na lista de pessoas de mais gente
+
+>> Maior número de soluções aceitas (10, 100, 1.000, 10.000)
+>> Autor do Kuni copiado mais vezes (50, 100, 500)
+>> Profile mais antigo (Novato, Experiente, Profissional, Ancião, Mestre)
+
+Goldenteam (grupos desenvolvem algo e transformam em público)
+Profile mais acessado
+Responsavel (leu a licensa do site)
+Ás (usa o teclado para usar o site)
+Maior número de conversões de material util privado para público (mais gente copiou material convertido)
+Autor de templates copiados
+Adicionado por mais gente em Kunis privados
+Maior número de tarefas sincronizadas por outras pessoas
+
+Criou seu primeiro Kuni
+Criou sua primeira tarefa
+Solucionou com sucesso alguma tarefa
+Converteu para público algum Kuni
+Adicionou um template público
+Sociavel (mandou um alert)
+Sociavel (mandou um comentário)
+
+Goals combinados geram outros goals maiores
+Alcançou todos (!)
+
+
+
+
+para usar no caso do accordion nao funcionar no ie6
+<style type="text/css">
+        .ui-accordion-content{ zoom: 1; } 
+</style>
+image test for kunies
+http://www.insoonia.com/wp-content/uploads/2009/04/img-37d03ef1-400x250.jpg
+
+LISTA DE LOGS
+0 #solution
+1 #comment
+2 #sync task
+3 #copy kuni
+4 #invite to private group
+5 #synched task deleted
+6 #solve synched task
+7 #watched kuni deleted
+8 #kuni cloned deleted
+9 #direct message
+10 #welcome
+
+
+:::INSTALACAO DO SITE:
+sudo gem install rake nokogiri hpricot builder cheat daemons json uuid fastthread rack
+sudo gem install mongo_mapper --source http://gemcutter.org
+sudo gem install mongo_ext
+sudo gem install sinatra-r18n thin bcrypt-ruby erubis pony
+sudo gem install sinatra 

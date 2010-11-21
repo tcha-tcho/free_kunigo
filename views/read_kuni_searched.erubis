@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<% if !@kuni.nil? %>
+	<div class="searchedTheme">
+		<div id="v<%= @kuni.id %>" class="idea_subject_viewer">
+			<span id="members">
+				<span id="members_click">
+					<% if !@guest %>
+						<% if @member %>
+							<input class="member_bt" type="button" value="<%= t.read_kuni.delete_member %>" id="delete_membership">
+						<% else %>
+							<input class="member_bt" type="button" value="<%= t.read_kuni.add_member %>" id="add_membership">
+						<% end %>
+					<% end %>
+					<span class="member_label" id="members_label"><%= t.read_kuni.members %> <span class="number"><%= @kuni.members.length %></span></span>
+				</span>
+			</span>
+			
+			<span class="idea_buttons_viewer"><input type="button" value="<%= t.read_kuni.close %>" id="close"></span>
+			<% if !@guest %>
+				<span class="idea_buttons_viewer"><input type="button" value="<%= t.read_kuni.fork %>" id="fork"></span>
+				<span class="idea_buttons_viewer"><input type="button" value="<%= t.read_kuni.watch %>" id="watch"></span>
+			<% end %>
+		</div><br>
+		<div id="members_list"></div>
+		
+		<div class="idea_title_viewer">
+			<h2><%== @kuni.title %><%= '<div style="font-size:40%;">TEMPLATE</div>' if @kuni.template %><span></span></h2>
+		</div>
+		
+		<div id="idea_menu">
+			<ul>
+				<li><a href="/kuni/tasks/<%= @kuni.id %>"><span class="number">...</span> <%= t.read_kuni.tasks %></a></li>
+				<!-- tasks -->
+				<li><a href="/kuni/comments/<%= @kuni.id %>"><%= t.read_kuni.comments %></a></li>
+				<!-- comments -->
+				<li><a href="/kuni/network/<%= @kuni.id %>"><%= t.read_kuni.network %></a></li>
+				<!-- network -->
+				<% if !@kuni.details.nil? %>
+				<li><a href="/kuni/details/<%= @kuni.id %>"><%= t.read_kuni.details %></a></li>
+				<!-- details -->
+				<% end %>
+			</ul>	
+		</div>
+	</div>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$("#se<%= @kuni.id %>").attr("class","search_selected");
+	});
+	</script>
+<% end %>
+</body></html>

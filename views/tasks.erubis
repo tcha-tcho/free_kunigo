@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<% if !@guest %>
+	<% if @he_can_see %>
+		<div id="actions">
+	       	<input type="button" class="delete_tasks" value="<%= t.tasks.delete_task %>" id="delete_task">&nbsp;
+			<% if !@kuni.template %>
+				<input type="button" class="broke_sync" value="<%= t.tasks.broke_sync %>" id="broke_sync">&nbsp;
+				<%= t.tasks.change %>: 
+				<input type="button" class="close_task" value="<%= t.tasks.closed %>" id="close_task">
+				<input type="button" class="mark_done" value="<%= t.tasks.is_done %>" id="mark_done">
+			<% end %>
+		</div>
+	<% end %>
+<% end %>
+<div id="tasks">
+	<% if !@guest %>
+		<% if @he_can_see %>
+		<div id="create_task_wrapper" class="ui-state-default">
+			<form id="create_task_form" action="home_submit" method="get">
+				<textarea name="Name" rows="2" id="title_of_your_task"></textarea><br>
+				<input id="send_create_task" type="submit" value="<%= t.tasks.create_send %>">
+				<div class="token"><%= session[:token] %></div>
+			</form><br>
+		</div>
+		<% end %>
+	<% end %>
+	<div>
+		<% if @kuni.sharing_type == 'private' %>
+			<% if @kuni.user_id == @user_id %>
+				<br>
+				<label class="kuni_details"><strong><%= t.details.users_auth %></strong> (<%= t.details.users_auth_ex %>)</label>      
+			      <select id="select2" name="select2">
+					<% @kuni.permitted_users.each do |user| %>
+				        <option value="<%= user %>" class="selected"><%== user %></option>
+					<% end %>
+			      </select>
+				<input type="button" value="<%= t.details.send_invites %>" id="send_invites">
+			<% else %>
+				<br>
+				<label class="kuni_details"><strong><%= t.details.participants %></strong></label>
+				<ul class="holder" style="border:none;">
+					<% @kuni.permitted_users.each do |user| %>
+						<li class="bit-box" style="padding-right:5px;"><%== user %></li>
+					<% end %>
+				</ul>
+			<% end %>
+		<% end %>		
+	</div>
+	<div id="details">
+		<br>
+		<div id="applesearch3">
+			<span class="sbox_l"></span><span class="sbox"><input type="text" id="srch_fld3" /></span><span class="sbox_r" id="srch_clear3"></span>
+			<div id="showing_tasks"><span><%= t.tasks.showing %>: </span><span id="showing_tasks_number"> (...) </span></div>
+		</div>		
+		<p class="kuni_details"><span style="line-height:12px;font-size:130%;color:gray;"><span style="font-size: 80%;">KUNIGO.COM/KUNI/<%= @kuni.id %></span><br><span class="timestamps_style"><%= 'Template  ' if @kuni.template %> <%= t.details.created_at %></span> <span class="timestamps"><%= @kuni.created_at %></span></span><br><%= t.details.by %>: <strong><a id="task_user_name" class="<%= @kuni_user_id %>"><%== @kuni_user_name %></a></strong></p>
+	</div>
+	
+	<!-- start of new category -->
+	<div class="tasks ui-accordion ui-widget ui-helper-reset">
+		<% if !@tasks.nil? %>
+			<% @tasks.each do |task| %>
+			<h3 id="tt<%= task.id %>" class="task_dragme ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">
+				<!-- task_dragme ui-accordion-header ui-helper-reset ui-state-active ui-corner-top -->
+				<span class="ui-icon ui-icon-circle-arrow-e"/>
+				<% if @kuni.template %>
+					<a class="task_title_template">
+				<% else %>
+					<a class="task_title_<%= 'non' if !task.is_done %>completed">
+				<% end %>
+					<div class="task_title">
+						<span class="task_title_number"><span class="number"><%= task.s_count %></span></span>
+						<%= "<span class='lock'/>" if task.closed %>
+						<%== task.title %>
+					</div>
+					</a>
+			</h3>
+	     	<div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom" ></div>
+			<% end %>
+		<% end %>
+		
+		<% if !@tasks_in_sync.nil? %>
+			<% @tasks_in_sync.each do |task_s| %>
+			<% task_sync = Task.find_by_id(task_s.original) %>
+				<% if !task_sync.nil? %>
+					<h3 id="tt<%= task_s.id %>" class="task_dragme ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">
+						<span class="ui-icon ui-icon-transferthick-e-w"/>
+						<a class="task_title_<%= 'non' if !task_sync.is_done %>completed">
+						<div class="task_title">
+							<span class="task_title_number"><span class="number"><%= task_sync.s_count %></span></span>
+							<%= "<span class='lock'/>" if task_sync.closed %>
+							<%== task_sync.title %>
+							<span class="in_sync"><%= t.tasks.in_sync %></span>
+						</div>
+						</a>
+					</h3>
+			     	<div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom" ></div>
+				<% end %>
+			<% end %>
+		<% end %>
+		
+	</div><br>
+	<!-- end of category -->	
+</div>
+</body></html>

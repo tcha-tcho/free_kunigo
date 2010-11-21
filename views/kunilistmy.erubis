@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+	<div id="kuni_token" class="token"><%= session[:kuni_token] %></div>
+	<li class="listgroup" id="kuni_publics_my"> &nbsp;&nbsp;&nbsp;&nbsp;<%= t.list_of_kunis.publics %> </li>
+	<div></div><br>
+	<li class="listgroup" id="kuni_privates_my"> &nbsp;&nbsp;&nbsp;&nbsp;<%= t.list_of_kunis.privates %> </li>
+	<div></div><br>
+	<% if !@mykunis.nil? %>
+	<% @mykunis.each do |kuni| %>
+	<li id="<%= kuni.id %>" class="kuni_unselected">
+		<div class="kuni_<%= kuni.sharing_type %>">
+			<div class="r_box">
+			   <div class="r_top"><div></div></div>
+			      <div class="r_content">
+					<span>
+						<span class="idea_container">
+							<span class="trash_icon"></span>
+							<% if kuni.template %>
+								<img class="idea_title" src="./img/bar_my_template.gif">
+							<% else %>
+								<img class="idea_title" src="./img/bar_my_<%= kuni.cache %>.gif">
+							<% end %>
+								<% if !kuni.image.nil? %>
+									<img class="kuni_images" src="<%= kuni.image %>">
+								<% end %>
+								<br><span class="idea_subject"><%= '<strong>TEMPLATE</strong><br>' if kuni.template %></span><%== kuni.title %></span>
+						</span>
+					</span>
+			      </div>
+			   <div class="r_bottom"><div></div></div>
+			</div>
+		</div>
+	</li>
+	<% end %>
+	<% end %>
+</script>
+</body>
+</html>

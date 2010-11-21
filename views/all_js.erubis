@@ -1,0 +1,2677 @@
+	window.onload = function () { applesearch.init(); }
+
+	if (!applesearch)	var applesearch = {};
+	applesearch.init = function ()
+	{
+		// add applesearch css for non-safari, dom-capable browsers
+		if ( navigator.userAgent.toLowerCase().indexOf('safari') < 0  && document.getElementById )
+		{	
+			// add style sheet if not safari
+			var dummy = document.getElementById("dummy_css");
+			if (dummy)	dummy.href = "css/applesearch.css";
+		}
+	}
+
+	// Array.indexOf( value, begin, strict ) - Return index of the first element that matches value
+	Array.prototype.indexOf = function( v, b, s ) {
+	 for( var i = +b || 0, l = this.length; i < l; i++ ) {
+	  if( this[i]===v || s && this[i]==v ) { return i; }
+	 }
+	 return -1;
+	};
+
+	// Array.lastIndexOf( value, begin, strict ) - Return index of the last element that matches value
+	Array.prototype.lastIndexOf = function( v, b, s ) {
+	 b = +b || 0;
+	 var i = this.length; while(i-->b) {
+	  if( this[i]===v || s && this[i]==v ) { return i; }
+	 }
+	 return -1;
+	};
+
+
+	$(document).ready(function() {
+		if ($.browser.msie) {
+			$.ajaxSetup({cache: false});//disable cache -- ie issue of course
+		}
+
+		//fix the app size and initialize things
+		$("#search").fadeTo("slow", 0);
+		$("#p_list").fadeTo("slow", 0);
+				
+		$.dynaCloud.auto = false;
+				
+		function resizeAllWindows() {
+			var theWindowHeight = $(window).height()
+			$(".r_content3").css("height", theWindowHeight-90);
+			$(".r_content4").css("height", theWindowHeight-70);
+			$(".r_content5").css("height", theWindowHeight-70);
+			$("#MyIdeasList").css("height", theWindowHeight-90);
+			$("#WatchedIdeasList").css("height", theWindowHeight-70);
+			$("#search_results").css("height", theWindowHeight-320);
+			$("#p_list_list").css("height", theWindowHeight-320);
+			$("#home").css("height", theWindowHeight-90);
+			$("#content").css("height", theWindowHeight-37);
+			$(".content").css("height", theWindowHeight-90);
+			$(".ui-tabs-panel").css("height", theWindowHeight-$(".idea_title_viewer").height()-205);
+			$(".with_header").css("height", theWindowHeight-$(".idea_title_viewer").height()-140);
+			
+			
+			// console.log($("#unlock-handle").css('left'))
+			// $("#unlock-handle").css({top:'auto',left:'auto'});
+		}
+		$(window).bind("resize", resizeWindow);
+		function resizeWindow( e ) {
+			resizeAllWindows();
+		}
+		
+		// ================================================================================
+		// = TIMESTAMPS CONFIGURATION --------------------------------------------------- =
+		// ================================================================================
+		var SETTINGS = {
+			time_ranges: [
+				{bound: Number.NEGATIVE_INFINITY,
+					cuteness: '<%= t.timestamps.t1 %>',unit_size: 0},
+				{bound: 0,
+					cuteness: '<%= t.timestamps.t2 %>',unit_size: 0},
+				{bound: 20 * 1000,
+					cuteness: '<%= t.timestamps.t3 %>',unit_size: 0},
+				{bound: 60 * 1000,
+					cuteness: '<%= t.timestamps.t4 %>',unit_size: 0},
+				{bound: 60 * 1000 * 2,
+					cuteness: '<%= t.timestamps.t5 %>',unit_size: 60 * 1000},
+				{bound: 60 * 1000 * 60,
+					cuteness: '<%= t.timestamps.t6 %>',unit_size: 0},
+				{bound: 60 * 1000 * 60 * 2,
+					cuteness: '<%= t.timestamps.t7 %>',unit_size: 60 * 1000 * 60},
+				{bound: 60 * 1000 * 60 * 24,
+					cuteness: '<%= t.timestamps.t8 %>',unit_size: 0},
+				{bound: 60 * 1000 * 60 * 24 * 2,
+					cuteness: '<%= t.timestamps.t9 %>',unit_size: 60 * 1000 * 60 * 24},
+				{bound: 60 * 1000 * 60 * 24 * 30,
+					cuteness: '<%= t.timestamps.t10 %>',unit_size: 0},
+				{bound: 60 * 1000 * 60 * 24 * 30 * 2,
+					cuteness: '<%= t.timestamps.t11 %>',unit_size: 60 * 1000 * 60 * 24 * 30},
+				{bound: 60 * 1000 * 60 * 24 * 30 * 12,
+					cuteness: '<%= t.timestamps.t12 %>',unit_size: 0},
+				{bound: 60 * 1000 * 60 * 24 * 30 * 12 * 2,
+					cuteness: '<%= t.timestamps.t13 %>',unit_size: 60 * 1000 * 60 * 24 * 30 * 12},
+				{bound: Number.POSITIVE_INFINITY,
+					cuteness: '<%= t.timestamps.t14 %>',unit_size: 0}
+			]
+		};
+		
+	
+	// ======================================================
+	// = search in place field----------------------------- =
+	// ======================================================
+		$("#srch_fld").keyup(function(event) {
+			$("#MyIdeasList").scrollTop(0);
+			processKeyUp($("#srch_clear"),$(this),$("#mylistshowing"),$("#scrollermy"));
+		});
+		$("#srch_fld2").keyup(function(event) {
+			$("#WatchedIdeasList").scrollTop(0);
+			processKeyUp($("#srch_clear2"),$(this),$("#watchedlistshowing"),$("#scrollerwatched"));
+		});
+		function processKeyUp(btn, fld, showing, target){
+			btn.css({ "background":"white url('img/srch_r_f2.gif') no-repeat top left"});
+			if (fld.val() != "")
+			{
+				searchAndClear(showing,fld.val(),target);
+				btn.css({ "background":"white url('img/srch_r_f2.gif') no-repeat top left"});
+				btn.bind("click",function(){clearBtnClick(fld,btn,showing,target);});
+			} else if (fld.val() == "")
+			{
+				removeHidden(showing,target);
+				btn.css({ "background":"white url('img/srch_r.gif') no-repeat top left"});
+				btn.unbind("click",function(){clearBtnClick();});
+			}
+		};
+		function clearBtnClick (fldID,btnID,showing,target) {
+			fldID.val("");
+			btnID.css({ "background":"white url('img/srch_r.gif') no-repeat top left"});
+			removeHidden(showing,target);
+		};
+		function searchAndClear (showing,value,target) {
+			var count = 0;
+		    target.find("li").each(function () {
+		        if ($(this).hasClass('listgroup')){return}
+				if ($(this).text().search(new RegExp(value, "i")) < 0) {
+		            $(this).hide();
+		        } else {
+		            $(this).show();
+					count++;
+		        }
+		    });
+			$(showing).text(count);
+		};
+		function removeHidden (showing,target) {
+			var count = 0;
+			target.find("li").each(function(){
+		        if ($(this).hasClass('listgroup')){return}
+				$(this).show();
+				count++;
+			});
+			$(showing).text(count);
+		};
+		
+// =========================================================================
+// = USER PLACE ---------------------------------------------------------- =
+// =========================================================================
+$("#user_name").click(function(){
+	$.ajax({
+		  url: "/user_info",
+		  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+		  success: function(data) {
+				$("#viewer_container").html(data);
+				$(".timestamps").cuteTime(SETTINGS);
+				resizeAllWindows();
+				sendMsg('<%= t.user.opened %>','#7F007F');
+				rebind_user();
+			}
+	})
+});
+function rebind_user() {
+	$("#close_user_info").click(function(){
+		load_emptyviewer();
+	})			
+	
+	//change pasword
+	$("#new_password_confirm").keydown(function(e){
+		if (e.keyCode == 13) {
+			$("#send_change_password").click();
+			return false;
+		}
+	});
+	$("#send_change_password").click(function(){
+		$("#send_change_password").attr("disable", true);
+		var errors = "";
+
+		var actual = $("#actual_password");
+		if (actual.val() == "") {
+			errors += "<%= t.errors.field_is_empty %>"
+		};
+		var new_password = $("#new_password");
+		if (new_password.val() == "") {
+			errors += '<%= t.errors.password_is_required %>'
+		}
+		if (new_password.val() != $("#new_password_confirm").val()) {
+			errors += '<%= t.errors.password_dont_match %>'
+		}
+		if (errors != "") {
+			alert(errors)
+			return false;
+		};
+
+		var dataString = 'actual_password='+ actual.val() + '&new_password=' + new_password.val();
+		actual.val("");
+		new_password.val("");
+		$("#new_password_confirm").val("");
+		
+		$.ajax({
+			type: "POST",
+			url: "/change_password",
+			data: dataString,
+			error: function(){
+				sendMsg("<%= t.errors.password_wrong %>", "#aa0000");
+				return false;
+			},
+			success: function() {
+				sendMsg("<%= t.user.password_changed %>", "green");
+			}
+		});
+		return false;
+	});
+	
+	//change email
+	$("#new_email").keydown(function(e){
+		if (e.keyCode == 13) {
+			$("#send_new_email").click();
+			return false;
+		}
+	});
+
+	not_allowed_email = false;
+	incorrect_email = false;
+	$("#new_email").keyup(function(){
+		var status_box = $(this).next();
+		if (!isValidEmailAddress($(this).val())) {
+			incorrect_email = true;
+			status_box.html("<span class='link_error'>&bull;</span>");
+			return false;
+		} else {
+			incorrect_email = false;
+		};
+		$.ajax({
+			type: "POST",
+			url: "/test_email",
+			data: 'email_to_test='+ $(this).val(),
+			success: function(data) {
+				if (data == 'k') {
+					status_box.html("<span class='link_accept'>&bull;</span>");
+					not_allowed_email = false;
+				} else {
+					status_box.html("<span class='link_error'>&bull;</span>");
+					not_allowed_email = true;
+				}
+			}
+		});
+	});
+	
+	$("#send_new_email").click(function(){
+		var errors = "";
+
+		var new_email = $("#new_email");
+		if (new_email.val() == "") {
+			errors += "<%= t.errors.email_is_required %>"
+		};
+
+		if (not_allowed_email) {
+			errors += '<%= t.errors.email_is_taken %>';
+		}
+		if (incorrect_email) {
+			errors += '<%= t.errors.email_incorrect %>';
+		}
+		if (errors != "") {
+			sendMsg(errors, "#aa0000");
+			return false;
+		};
+
+		var dataString = 'new_email='+ new_email.val();
+		$.ajax({
+			type: "POST",
+			url: "/change_email",
+			data: dataString,
+			error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			success: function() {
+				sendMsg('<%= t.user.email_changed %>', 'green')
+			}
+		});
+		return false;
+	});
+	
+	
+}//end
+
+// =========================================================================
+// = REBIND GUEST FORMS -------------------------------------------------- =
+// =========================================================================
+function rebind_guestregister() {
+	$('#reg_password').hide();
+	$('#reg_password_clear').show();
+	$('#reg_confirmpassword').hide();
+	$('#reg_confirmpassword_clear').show();
+	
+	$("#reg_email").focus(function(){if ($(this).val() == "email"){$(this).val("");$(this).addClass("textregister_edit")}});
+	$("#reg_email").blur(function(){if ($(this).val() == "") {$(this).val("email");$(this).removeClass("textregister_edit")}});
+	$("#reg_user").focus(function(){if ($(this).val() == "<%= t.home.user_name %>"){$(this).val("");$(this).addClass("textregister_edit")}});
+	$("#reg_user").blur(function(){if ($(this).val() == "") {$(this).val("<%= t.home.user_name %>");$(this).removeClass("textregister_edit")}});
+
+	$("#reg_password_clear").focus(function(){
+		$("#reg_password").addClass("textregister_edit")
+	    $('#reg_password_clear').hide();
+	    $('#reg_password').show();
+	    $('#reg_password').focus();
+	});
+	$("#reg_password").blur(function(){
+	    if($('#reg_password').val() == '') {
+			$("#reg_password").removeClass("textregister_edit")
+	        $('#reg_password_clear').show();
+	        $('#reg_password').hide();
+	    }
+	});
+	$("#reg_confirmpassword_clear").focus(function(){
+		$("#reg_confirmpassword").addClass("textregister_edit")
+	    $('#reg_confirmpassword_clear').hide();
+	    $('#reg_confirmpassword').show();
+	    $('#reg_confirmpassword').focus();
+	});
+	$("#reg_confirmpassword").blur(function(){
+	    if($('#reg_confirmpassword').val() == '') {
+			$("#reg_confirmpassword").removeClass("textregister_edit")
+	        $('#reg_confirmpassword_clear').show();
+	        $('#reg_confirmpassword').hide();
+	    }
+	});
+	
+	//CREATE USER
+	//test user name
+	not_allowed_user = false;
+	not_allowed_email = false;
+	not_match_password = false;
+	$("#reg_user").keyup(function(){
+		$(this).val($(this).val().replace(/[\s*]|@|&|%|#|!|:|;|,/g,""));
+		if ($(this).val() == '') {
+			$("#status_user").html("<img src='../img/reject.gif'>");
+			return false;
+		};
+		$.ajax({
+			type: "POST",
+			url: "/test_user",
+			data: 'user_to_test='+ $(this).val(),
+			success: function(data) {
+				if (data == 'k') {
+					$("#status_user").html("<img src='../img/accept.gif'>");
+					not_allowed_user = false;
+				} else {
+					$("#status_user").html("<img src='../img/reject.gif'>");
+					not_allowed_user = true;
+				}
+			}
+		});
+	});
+	$("#reg_user").keydown(function(){
+		$(this).val($(this).val().replace(/[\s*]|@|&|%|#|!|:|;|,/g,""));
+	});
+	$("#reg_email").keyup(function(){
+		if (!isValidEmailAddress($(this).val())) {
+			$("#status_email").html("<img src='../img/reject.gif'>");
+			return false;
+		};
+		$.ajax({
+			type: "POST",
+			url: "/test_email",
+			data: 'email_to_test='+ $(this).val(),
+			success: function(data) {
+				if (data == 'k') {
+					$("#status_email").html("<img src='../img/accept.gif'>");
+					not_allowed_email = false;
+				} else {
+					$("#status_email").html("<img src='../img/reject.gif'>");
+					not_allowed_email = true;
+				}
+			}
+		});
+	});
+	$("#reg_confirmpassword").keyup(function(){
+		if ($(this).val() != $("#reg_password").val()) {
+			// $("#status_reg_password").html("<img src='../img/reject.gif'>");
+			$("#status_reg_password_confirm").html("<img src='../img/reject.gif'>");
+			not_match_password = true;
+			return false;
+		} else {
+			$("#status_reg_password").html("<img src='../img/accept.gif'>");
+			$("#status_reg_password_confirm").html("<img src='../img/accept.gif'>");
+			not_match_password = false;
+		}
+	});
+	$("#send_create_user").click(function(){
+		var errors = "";
+
+		var reg_email = $("#reg_email");
+		if (reg_email.val() == "" || reg_email.val() == "email") {
+			$("#status_email").html("<img src='../img/reject.gif'>");
+			errors += "<%= t.errors.email_is_required %>"
+		};
+
+		var reg_user = $("#reg_user");
+		if (reg_user.val() == "" || reg_user.val() == "<%= t.home.user_name %>") {
+			$("#status_user").html("<img src='../img/reject.gif'>");
+			errors += "<%= t.errors.user_is_required %>"
+		}
+		if (not_allowed_email) {
+			errors += '<%= t.errors.email_is_taken %>';
+		}
+		if (not_allowed_user) {
+			errors += '<%= t.errors.user_is_taken %>';
+		}
+		var reg_password = $("#reg_confirmpassword");
+		if (reg_password.val() == "" || reg_password.val() == "<%= t.home.password %>") {
+			$("#status_reg_password").html("<img src='../img/reject.gif'>");
+			$("#status_reg_password_confirm").html("<img src='../img/reject.gif'>");
+			errors += '<%= t.errors.password_is_required %>'
+		}
+		if (reg_password.val() != $("#reg_password").val()) {
+			// $("#status_reg_password").html("<img src='../img/reject.gif'>");
+			$("#status_reg_password_confirm").html("<img src='../img/reject.gif'>");
+			errors += '<%= t.errors.password_dont_match %>'
+		}
+		if (errors != "") {
+			alert(errors)
+			return false;
+		};
+		$("#send_create_user_loading").show()
+		$("#send_create_user").hide();
+
+		var dataString = 'reg_email='+ reg_email.val() + '&reg_user=' + reg_user.val().replace(/\s|@|&|%|#|!|:|;|,/i,"") + '&reg_password=' + reg_password.val() + '&pre_token=' + $("#pre_token").text();
+		$.ajax({
+			type: "POST",
+			url: "/create_user",
+			data: dataString,
+			error: function(){
+				alert("<%= t.errors.generic_error %>");
+				$("#send_create_user_loading").hide()
+				$("#send_create_user").show();
+				return false;
+			},
+			success: function() {
+				window.location.href = "/";
+			}
+		});
+		return false;
+	});
+}
+
+function rebind_guestmy() {
+	//home buttons
+	$("#home_button").click(function(){
+		load_home();
+	})
+	$("#howto_button").click(function(){
+		load_howto();
+	})
+	$("#faq_button").click(function(){
+		load_faq();
+	})
+	$("#contact_button").click(function(){
+		$("#contact_bt").click();
+	})
+	
+	
+	//fill forms and back
+	if ($("#login_user").val() != "<%= t.home.user_name %>") {
+		if (!$("#login_user").hasClass("textlogin_edit")) {
+			$("#login_user").addClass("textlogin_edit");
+		}
+	}
+	$('#login_password').hide();
+	$('#login_password_clear').show();
+	
+	$("#login_user").focus(function(){if ($(this).val() == "<%= t.home.user_name %>"){$(this).val("");$(this).addClass("textlogin_edit")}});
+	$("#login_user").blur(function(){if ($(this).val() == "") {$(this).val("<%= t.home.user_name %>");$(this).removeClass("textlogin_edit")}});
+	$("#login_password_clear").focus(function(){
+		$("#login_password").addClass("textlogin_edit")
+	    $('#login_password_clear').hide();
+	    $('#login_password').show();
+	    $('#login_password').focus();
+	});
+	$("#login_password").blur(function(){
+	    if($('#login_password').val() == '') {
+			$("#login_password").removeClass("textlogin_edit")
+	        $('#login_password_clear').show();
+	        $('#login_password').hide();
+	    }
+	});
+	
+
+	$("#select_language").change(function(){
+		window.location.replace("http://kunigo.com/lang/"+ $(this).val());
+	})
+	//forgot password
+	$("#forgot_password").click(function(){
+		$("#status_login").html("")
+		$("#status_password").html("")
+		// validate and process form here
+		var login_user = $("#login_user");
+		if (login_user.val() == "" || login_user.val() == "<%= t.home.user_name %>") {
+			$("#status_login").html("<img src='../img/reject.gif'>");
+			alert("<%= t.errors.empty_forgot %>");
+			return false;
+		}
+		$("#send_login_loading").show();
+		$("#send_login").hide();
+
+		var dataString = 'login_user='+ login_user.val();
+		$("#forgot_password").hide();
+		$.ajax({
+			type: "POST",
+			url: "/forgot_password",
+			data: dataString,
+			error: function(){
+				alert("<%= t.errors.error_forgot %>");
+				$("#send_login_loading").hide();
+				$("#send_login").show();
+				return false;
+			},
+			success: function() {
+				$("#send_login_loading").hide();
+				$("#send_login").show();
+				$("#forgot_password").show();
+				alert("<%= t.messages.password_sended %>")
+			}
+		});
+		return false;		
+	})
+	
+	//form section
+	//LOGIN
+	$("#login_password").keydown(function(e){
+		if (e.keyCode == 13) {
+			$("#send_login").click();
+			return false;
+		}
+	});
+	$("#send_login").click(function(){
+		var errors = "";
+		$("#status_login").html("")
+		$("#status_password").html("")
+		// validate and process form here
+
+		var login_user = $("#login_user");
+		if (login_user.val() == "" || login_user.val() == "<%= t.home.user_name %>") {
+			$("#status_login").html("<img src='../img/reject.gif'>");
+			errors += "<%= t.errors.empty_user %>";
+		}
+		var login_password = $("#login_password");
+		if (login_password.val() == "" || login_password.val() == "<%= t.home.password %>") {
+			$("#status_password").html("<img src='../img/reject.gif'>");
+			errors += "<%= t.errors.empty_password %>"
+		}
+		if (errors != "") {
+			alert(errors)
+			return false;
+		};
+		$("#send_login_loading").show();
+		$("#send_login").hide();
+
+		var dataString = 'login_user='+ login_user.val() + '&login_password=' + login_password.val();
+		$.ajax({
+			type: "POST",
+			url: "/login",
+			data: dataString,
+			error: function(){
+				alert("<%= t.errors.login_fail %>");
+				$("#send_login_loading").hide();
+				$("#send_login").show();
+				return false;
+			},
+			success: function() {
+				window.location.href = "/index";
+			}
+		});
+		return false;
+	});
+
+}
+
+function isValidEmailAddress(emailAddress) {
+	var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+	return pattern.test(emailAddress);
+}
+
+// =========================================================================
+// = CREATE KUNI --------------------------------------------------------- =
+// =========================================================================
+	//see kgpl
+	$("#kgpl").click(function(){
+		$("#viewer_container").load("<%= t.index.kgpl_link %>", function(){
+			resizeAllWindows();
+			$("#close_kgpl").click(function(){
+				load_emptyviewer();
+			})			
+		});
+	})
+	$("#public_radio_bt").click(function(){
+		$("#kgpl").show();
+	});
+	$("#private_radio_bt").click(function(){
+		$("#kgpl").hide();
+	});
+	//create_kuni section
+	$("#create_kuni_bt").click(function(){
+		$("#create_kuni_bt").attr("disabled", true);
+		$("#create_kuni").animate({ 
+		        height: 270
+		      }, 1000 ,function(){$("#title_of_your_kuni").focus()});
+	});
+	$("#cancel_create_kuni_bt").click(function(){
+		$("#create_kuni_bt").attr("disabled", false);
+		$("#create_kuni").animate({
+		        height: 0
+		      }, 700 );
+	});
+
+	$("#title_of_your_kuni").keydown(function(e){
+		if (e.keyCode == 13) {
+			$("#send_create_kuni").click();
+			return false;
+		}
+	});
+	//form section
+	$("#send_create_kuni").click(function(){
+		var errors = "";
+		$(".invalid").removeClass("invalid")
+		// validate and process form here
+
+		var title = $("#title_of_your_kuni");
+		if (title.val() == "") {
+			title.addClass("invalid");
+			errors += "<%= t.errors.title_is_required %>"
+			title.focus();
+		}
+		var access = $("input[name='access']:checked");
+
+		if (errors != "") {
+			sendMsg(errors,"red")
+			return false;
+		};
+		var template;
+		if ($("input[name='template']:checked").val() == null) {
+			template = false
+		} else {
+			template = true
+		}
+		$("#send_create_kuni").attr("disabled", true);
+		var dataString = 'template='+ template  + '&title=' + encodeURIComponent(title.val()) + '&access=' + access.val() + '&kuni_token=' + $("#kuni_token").text();
+		title.val("");
+		$.ajax({
+			type: "POST",
+			url: "/create_kuni",
+			data: dataString,
+			success: function(data) {
+				title.val('');
+				$("input[name='template']").attr('checked', false);
+				$("#create_kuni_bt").attr("disabled", false);
+				$("#create_kuni").animate({
+				        height: 0
+				      }, 1000 );
+				$("#send_create_kuni").attr("disabled", false);
+					sendMsg("<%= t.messages.created %> : " + data,"green");
+					$("#title_my").click();
+					view_kuni('kuni',data,'my',true);
+			}
+		});
+		return false;
+	});
+
+
+// ============================================================================================
+// = SEARCH FORM SECTION -------------------------------------------------------------------- =
+// ============================================================================================
+	$("#see_all").click(function(){
+		var dataString = 'term='+ "" + '&filter=' + "all";
+		$.ajax({
+			type: "POST",
+			url: "/search",
+			data: dataString,
+			success: function(data) {
+				$("#search_results").html(data);
+				sendMsg("<%= t.messages.searched %>","green");
+				rebind_search();
+			}
+		});
+		return false;
+	})
+	$("#see_member").click(function(){
+		var dataString = 'term='+ "" + '&filter=' + "member";
+		$.ajax({
+			type: "POST",
+			url: "/search",
+			data: dataString,
+			success: function(data) {
+				$("#search_results").html(data);
+				sendMsg("<%= t.messages.searched %>","green");
+				rebind_search();
+			}
+		});
+		return false;
+	})
+
+	$("#search_term").keydown(function(e){
+		if (e.keyCode == 13) {
+			$("#send_search").click();
+			return false;
+		}
+	});
+	$("#send_search").click(function(){
+		$(".invalid").removeClass("invalid")
+		// validate and process form here
+
+		var term = $("#search_term");
+		if (term.val() == "") {
+			term.addClass("invalid");
+			sendMsg("<%= t.errors.field_is_empty %>","red")
+			term.focus();
+			return false;
+		}
+		var filter = $("#search_form select[name='filter']");
+
+		var dataString = 'term='+ term.val() + '&filter=' + filter.val();
+		$.ajax({
+			type: "POST",
+			url: "/search",
+			data: dataString,
+			success: function(data) {
+				term.val('');
+				$("#search_results").html(data);
+				sendMsg("<%= t.messages.searched %>","green");
+				rebind_search();
+			}
+		});
+		return false;
+	});
+
+	$("#search_bt").click(function(){
+		$("#myideas").fadeTo("slow", 0.30)
+		$("#titlebar").fadeTo("slow", 0.30)
+		$("#search").animate({ 
+		        width: "33%",
+				opacity: 0.85
+		      }, 1000 );
+		$("#search_term").focus();
+	});
+	$("#close_search_bt").click(function(){
+		$("#myideas").fadeTo("slow", 1)
+		$("#titlebar").fadeTo("slow", 1)
+		$("#search").animate({ 
+		        width: "0%",
+				opacity: 0
+		      }, 500 );
+	});
+
+
+// =============================================================================================================
+// = TITLE BUTTONS HANDLES ----------------------------------------------------------------------------------- =
+// =============================================================================================================
+
+	$("#top_logo").click(function(){
+		window.location.href = "/index";
+	});
+	$("#contact_bt").click(function(){
+		$("#viewer_container").load("/contact")
+	});
+	$("#logout_bt").click(function(){
+		$.ajax({
+			  url: "/logout",
+			  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			  success: function(data) {
+				window.location.href = "/";
+				}
+		})
+	});
+	$("#user_alerts").click(function(){
+		$(".kuni_selected").attr("class", "kuni_unselected");
+		$.ajax({
+			  url: "/user_alerts",
+			  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			  success: function(data) {
+					$("#viewer_container").html(data);
+					$(".timestamps").cuteTime(SETTINGS);
+					resizeAllWindows();
+					sendMsg('<%= t.alerts.opened %>','orange');
+					rebind_alerts();
+				}
+		})
+	});
+	$("#user_alerts").hover(
+		function(){$("#user_alerts_img").attr("src", "../img/top_alert_hover.gif")},
+		function(){$("#user_alerts_img").attr("src", "../img/top_alert.gif")}
+	);
+
+// =============================================================================================================================
+// = REBIND ALERTS ----------------------------------------------------------------------------------------------------------- =
+// =============================================================================================================================
+function update_alerts() {
+	$.ajax({
+		  url: "/update_alerts",
+		  error: function(response) {},
+		  success: function(data) {
+			var sno = data;
+			if (data == "0") {
+				$("#alert_number").html("");
+			} else {
+				var nmbr = "";
+				for (var i = 0 ; i < sno.length ; i++){
+					nmbr += sno.charAt(i) + "<br>";
+				}
+				$("#alert_number").html(nmbr);
+			}
+		  }
+	})
+}
+update_alerts();
+window.setInterval(update_alerts, 90000);//interval of the update 1min
+
+function rebind_alerts() {
+	$("#alert_number").html("");
+	$(".alert_line").click(function(){
+		alert_line = $(this)
+		if(alert_line.hasClass("message")){
+			var user_id = alert_line.children("div").children("a").attr("class");
+			view_kuni("user",user_id,'searched',true);
+		}else if (alert_line.children('div').children('div').hasClass("welcome_alert")){
+			return false;
+		}else{
+			var kuni_id = alert_line.children('div').children('span').attr("class");
+			goto_kuni(kuni_id);
+		}
+	})
+
+	$(".alert_line a").click(function(event){
+		event.stopPropagation();
+		var user_id = $(this).attr("class");
+		view_kuni("user",user_id,'searched',true);
+	});
+	rebind_bbcode(".txt_msg",".not_exist");
+}
+
+// =============================================================================================================================
+// = MY AND WATCHED REFRESH LIST AND BINDING DBLCLICK------------------------------------------------------------------------- =
+// =============================================================================================================================
+
+	$("#title_my").click(function(){
+		$.ajax({
+		  url: "/kunilist/my",
+		  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+		  success: function(html){
+			$("#MyIdeasListWrapp").empty();
+			$("#MyIdeasListWrapp").append("<div id='MyIdeasList'><div id='scrollermy'><ul id='my_ideas_listing' class='ideas_listing'></ul></div></div>");
+		    $("#my_ideas_listing").html(html);
+			$(".r_box").click(function(){
+				if(!$('#MyIdeasList').iscroll.scrolling){
+					view_kuni('kuni',$(this).parent().parent().attr("id"),"my", false);
+				};
+			});
+			rebind_kunilistmy();
+			try_to_highlight("my");
+		  }
+		});
+	});
+	$("#title_watched").click(function(){
+		$.ajax({
+		  url: "/kunilist/watched",
+		  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+		  success: function(html){
+			$("#WatchedIdeasListWrapp").empty();
+			$("#WatchedIdeasListWrapp").append("<div id='WatchedIdeasList'><div id='scrollerwatched'><ul id='watched_ideas_listing' class='ideas_listing'></ul></div></div>");
+		    $("#watched_ideas_listing").html(html);
+			$(".r_box2").click(function(){
+				if(!$('#WatchedIdeasList').iscroll.scrolling){
+					view_kuni('kuni',$(this).parent().parent().attr("id"),"watched", false);
+				};
+			});
+			rebind_kunilistwatched();
+			try_to_highlight("watched");
+		  }
+		});
+	});
+	function try_to_highlight (type) {
+		var kuni_id = $(".idea_subject_viewer").attr("id");
+		if (kuni_id != undefined) {
+			kuni_id = kuni_id.substring(1);
+			$("#" + kuni_id).attr("class","kuni_selected");
+			if (type == 'my') {
+				$('#MyIdeasList').scrollTo($("#"+kuni_id),500);		
+			} else if (type == 'watched') {
+				$('#WatchedIdeasList').scrollTo($("#"+kuni_id),500);				
+			};
+		};
+	};
+// ===========================================================================================================
+// = RELOAD JUST THE RIGHT BAR ----------------------------------------------------------------------------- =
+// ===========================================================================================================
+//just work to my kunis
+function reload_bar(kuni_id) {
+	$.ajax({
+	  url: "/reload_bar/"+kuni_id,
+	  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+	  success: function(data) {
+			if (data != 'x') {
+				$("#" + kuni_id).find(".idea_title").attr("src","./img/bar_my_" + data + ".gif");
+			};
+		}
+	});	
+}
+
+// ===========================================================================================================
+// = OPEN VIEWER WITH THE SPECIFIC KUNI -------------------------------------------------------------------- =
+// ===========================================================================================================
+function view_kuni(path,kuni_id,type,not_click) {//user_id
+	$(".kuni_images").fadeTo("slow",0.3);
+	$("#"+kuni_id).find(".kuni_images").fadeTo("slow",1);
+
+	$("#viewer_container_wrapp").empty();
+	$("#viewer_container_wrapp").html("<div id='viewer_container'></div>");
+	$("#viewer_container").html("<%= t.messages.loading %>")
+	$(".kuni_selected").switchClass("kuni_unselected");
+	$("#"+kuni_id).attr("class","kuni_selected");
+	
+	$.ajax({
+	  url: "/read_"+path+"_" + type + "/" + kuni_id,
+	  error: function(response) {
+		if (type == 'watched') {
+			$("#viewer_container").html("<div id=v"+kuni_id+" class='idea_subject_viewer'><span class='idea_buttons_viewer'><input type='button' value='<%= t.read_kuni.remove %>' id='remove'></span><br><h2><%= t.errors.permission_refused %></h2></div>");
+			rebindtabs();
+		}
+		sendMsg("<%= t.errors.read_error %>",'#aa0000');
+		load_emptyviewer();
+		},
+	  success: function(data) {
+			$("#viewer_container").html(data);
+			if (not_click) {
+				try_to_highlight(type);
+			};
+			$(".timestamps").cuteTime(SETTINGS)
+			resizeAllWindows();
+			if (path != "user") {
+				rebindtabs();	
+			};
+			if (path == "user") {//isso tem que ser um rebind
+				$('#dynacloud').parent().dynaCloud();
+				
+				$("#selectable li").each(function(){
+					if ($(this).attr("id") == $(".idea_subject_viewer").attr("id").substring(1)) {
+						$(".idea_title_viewer h2").css("color","#4173CC");
+						$("#add_p_list_folder").append("<strong><span id='open_p_list'><%= t.read_kuni.in_list %></span></strong>");
+						$("#open_p_list").click(function(){$("#user_p_list").click()})
+						$("#add_p_list").remove();
+					}
+				});
+				
+				$(".solution_line").click(function(){
+					var kuni_id = $(this).attr("id").substring(2);
+					goto_kuni(kuni_id);
+				});
+				$("#close_user_info").click(function(){
+					load_emptyviewer();
+				})		
+				$("#add_p_list").click(function(){
+					var dataString = 'name=' + $("h2").text() + '&u_id=' + $(".idea_subject_viewer").attr("id").substring(1);
+					$.ajax({
+						type: "POST",
+						url: "/add_in_p_list",
+						data: dataString,
+						error:function(){sendMsg('<%= t.errors.duplicated_user %>', '#aa0000')},
+						success: function() {
+							reload_p_list();
+							sendMsg("=)", "#4173CC");
+
+							$("#all_title").effect("transfer",{ to: "#user_p_list", className: 'ui-effects-transfer' },1500,callback);
+							//callback function to bring a hidden box back
+							function callback(){
+								$("#user_p_list").effect("bounce");
+								$(".idea_title_viewer h2").css("color","#4173CC");
+								$("#add_p_list_folder").append("<strong><span id='open_p_list'><%= t.read_kuni.in_list %></span></strong>");
+								$("#open_p_list").click(function(){$("#user_p_list").click()})
+								$("#add_p_list").remove();
+							};
+						}
+					});
+				});
+				rebind_bbcode(".no_exist","#message");
+				rebind_slider("user");
+			} else if (path == "task") { //isso também
+				$(".go_to_original").click(function(){
+					var kuni_id = $(this).attr("id").substring(4);
+					goto_kuni(kuni_id);
+				});
+				$("#all_title").draggable({
+					start:function(){
+						$("#MyIdeasList").css({border:'2px dashed red'});
+						},
+					stop:function(){
+						$("#MyIdeasList").css({border:''});
+						},
+					opacity: 0.8,
+					cursorAt: { right: 0, top:10 },
+					helper: function(){return $("<div>").append("<img src='img/task_icon.png'>")},
+					cursor: 'pointer',
+					refreshPositions: true,
+					revert: 'invalid',
+					addClasses: false,
+					zIndex: 2700,
+					appendTo: 'body'
+					});
+					bind_droppable();
+			};
+		}
+	});
+}
+	
+// ==========================================================================================================
+// = REBIND TABS (READ_KUNI) ------------------------------------------------------------------------------ =
+// ==========================================================================================================
+
+	function rebindtabs() {
+		var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+		$("#" + kuni_id).attr("class","kuni_selected");
+
+		function tabsreload() {
+			$('#idea_menu').tabs({
+				select: function(){$("#unlock-slider-wrapper").remove()},
+				load: function(event,ui){
+					if (ui.index == 0) {
+						rebind_tasks();
+					} else if (ui.index == 1) {
+						rebind_comments();
+					} else if (ui.index == 2) {
+						rebind_network();
+					} else if (ui.index == 3) {
+						rebind_details();
+					}
+				}
+			});
+		};
+		tabsreload();
+		
+		//member section
+		$("#members_click").click(function(){
+			var slideto;
+			if ($("#members_list").height() == 200) {
+				slideto = 0;
+				$("#members_list").html('');
+			} else {
+				$("#members").prepend('  <span id="loading_members">loading...</span>');
+				slideto = 200;
+				$.ajax({
+				  url: '/members_list/'+kuni_id,
+				  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				  success: function(data) {
+					$("#members_list").html(data);
+					$("#loading_members").remove();
+					reload_memberlist();
+					}
+				});
+			}
+			$("#members_list").animate({
+			    height: slideto
+			  }, 500, function() {
+			    // Animation complete.
+		  	});
+		});
+		function reload_memberlist() {
+			$("li.member_line").click(function(){
+				view_kuni('user',$(this).attr("id").substring(6),'searched',true);
+			})
+			$("#send_all").keydown(function(e){
+				if (e.keyCode == 13) {
+					$("#send_to_all_members").click();
+					return false;
+				}
+			});
+			$("#send_to_all_members").click(function(){
+				if ($("#send_all").val() == '') {
+					alert("<%= t.errors.field_is_empty %>")
+				} else {
+					var dataString = 'message='+ encodeURIComponent($("#send_all").val());
+					$.ajax({
+						type: "POST",
+						url: "/send_alerts/" + kuni_id,
+						data: dataString,
+						error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+						success: function(data) {
+							$("#send_all").val('');
+							sendMsg('<%= t.read_kuni.message_sended %>','green');
+						}
+					});
+					return false;
+				}
+			});
+		}
+		
+		function members_reload() {
+			$("#add_membership").click(function(event){
+				event.stopPropagation();
+				var button = $(this);
+				button.attr("disabled", true);
+				$.ajax({
+				  url: "/add_member/"+kuni_id,
+				  error: function(response) {sendMsg('<%= t.errors.there_is_another %>','#aa0000')},
+				  success: function(data) {
+					$("#members_label").find(".number").text(parseInt($("#members_label").find(".number").text())+1)
+					$("#members").prepend("<input class='member_bt' type='button' value='<%= t.read_kuni.delete_member %>' id='delete_membership'>")
+					button.remove()
+					sendMsg('<%= t.messages.member_added %>','green');
+					members_reload();
+					}
+				});
+			});
+			$("#delete_membership").click(function(event){
+				event.stopPropagation();
+				var button = $(this);
+				button.attr("disabled", true);
+				$.ajax({
+				  url: "/delete_member/"+kuni_id,
+				  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				  success: function(data) {
+					$("#members_label").find(".number").text(parseInt($("#members_label").find(".number").text())-1)
+					$("#members").prepend("<input class='member_bt' type='button' value='<%= t.read_kuni.add_member %>' id='add_membership'>")
+					button.remove()
+					sendMsg('<%= t.messages.member_deleted %>','green');
+					members_reload();
+					}
+				});
+			});
+		};
+		members_reload();
+		
+		
+		$("#watch").click(function(){
+			if ($("#MyIdeasList").find("#"+kuni_id).length == 0) {
+				$.ajax({
+				  url: "/watch/"+kuni_id,
+				  error: function(response) {sendMsg('<%= t.errors.there_is_another %>','#aa0000')},
+				  success: function(data) {
+					sendMsg('<%= t.messages.watch_created %>','green');
+					$("#viewer_container").empty();
+					$("#viewer_container").html(data);
+					$("#title_watched").click();
+					rebindtabs();
+					}
+				});
+			} else {
+				sendMsg('<%= t.errors.present_in_mylist %>','#aa0000');
+			}
+		});
+		$("#fork").click(function(){
+			$.ajax({
+			  url: "/fork/"+kuni_id,
+			  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			  success: function(data) {
+				sendMsg('<%= t.messages.fork_created %>','green');
+				$("#viewer_container").empty();
+				$("#viewer_container").html(data);
+				$("#title_my").click();
+				rebindtabs();
+				}
+			});
+		});
+
+
+		//delete and remove dialogs
+		$("#delete").click(function(){
+			if (confirm('<%= t.messages.confirm_delete %>')) {
+				$.ajax({
+				  url: "/delete/"+kuni_id,
+				  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				  success: function(data) {
+					sendMsg('<%= t.messages.deleted %>','green');
+					$("#close").click();
+					$("#title_my").click();
+					}
+				});
+			}
+		});
+		$("#remove").click(function(){
+			if (confirm('<%= t.messages.confirm_remove %>')) {
+				$.ajax({
+				  url: "/remove/"+kuni_id,
+				  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				  success: function(data) {
+					sendMsg('<%= t.messages.removed %>','green');
+					load_emptyviewer();
+					$("#title_watched").click();
+					}
+				});
+			}
+		});
+
+		$("#make_public").click(function(){
+			$.ajax({
+			  url: "/make_public/"+ kuni_id,
+			  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			  success: function(data) {
+				sendMsg('<%= t.messages.make_public %>','green');
+				$("#title_my").click();
+				goto_kuni(data);
+				}
+			});
+		});
+
+		$("#close").click(function(){
+			load_emptyviewer();
+		});
+		resizeAllWindows();
+	};
+	//end of rebindtabs
+
+
+	// ==============================
+	// = CONFIGURE TASKS SHORTCUTS  =
+	// ==============================
+	$(document).keydown(function(e){
+		if (e.metaKey && e.keyCode == 65) {//meta + a
+			e.preventDefault();
+			select_all_tasks(); 
+			return false;
+		} else if (e.keyCode == 27) {//esc
+			deselect_tasks();
+			$("#cancel_create_kuni_bt").click();
+			$("#close_search_bt").click();
+			$("#close_p_list").click();
+		} else if (e.metaKey && e.keyCode == 70){//meta + f
+			e.preventDefault();
+			$("#search_bt").click();
+		} else if (e.metaKey && e.keyCode == 78){//meta + n
+			e.preventDefault();
+			$("#create_kuni_bt").click();
+		} else if (e.keyCode == 8 || e.keyCode == 46) {//del or backscape
+			if ($('h3.ui-state-hover').length != 0){
+				e.preventDefault();
+				if (confirm('<%= t.messages.confirm_delete_task %>')) {
+					delete_tasks();//del or backscape
+				}
+			}
+		}
+	});
+
+
+	// ========================================================================================
+	// = REBIND TASKS AREA ------------------------------------------------------------------ =
+	// ========================================================================================
+
+	function rebind_tasks() {
+		$("#title_of_your_task").focus();
+		$(".timestamps").cuteTime(SETTINGS)
+		$("#idea_menu").find('li:first').find('.number').text($("h3.task_dragme").length);
+		
+		//toolbar
+		$(".delete_tasks").click(function(){
+			if (confirm('<%= t.messages.confirm_delete_task %>')) {
+				delete_tasks();
+			}
+		});
+		$(".close_task").click(function(){
+			close_tasks();
+		});
+		$(".broke_sync").click(function(){
+			broke_syncs();
+		});
+		$(".mark_done").click(function(){
+			mark_as_completed();
+		}); 
+
+		$(".idea_category_viewer").focus(function(){
+			$(".idea_category_viewer").select();
+		})
+		//clickable name
+		$("#task_user_name").click(function(){
+			view_kuni('user',$(this).attr("class"),'searched',true);
+		})
+		
+		//setup
+		//JUST FOR PRIVATES KUNIS
+		//form section
+		$("#select2").fcbkcomplete({
+			json_url: "/gimeusers",
+			// json_url: "fetched.txt",
+			//complete_text: true,
+			// cache: true,
+			// filter_case: true,
+			// filter_hide: true,
+			firstselected: true,
+			onremove: function () {change_permissions()},
+			onselect: function () {change_permissions()},
+			filter_selected: false,
+			newel: true  
+		});
+		function change_permissions(){
+			var actual_elements = $(".holder").find('li.bit-box')
+			var new_users_list = '';
+			actual_elements.each(function(){
+				new_users_list += "," + $(this).text();
+			});
+			var dataString = 'users_permitted='+ new_users_list;
+			$.ajax({
+				type: "POST",
+				url: "/change_permissions/"+$(".idea_subject_viewer").attr("id").substring(1),
+				data: dataString,
+				error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000');$("#idea_menu").tabs('load', $("#idea_menu").tabs('option', 'selected'));},
+				success: function() {
+					sendMsg("<%= t.messages.changed %>","green");
+				}
+			});
+			return false;
+		}
+		$("#send_invites").click(function(){
+			$.ajax({
+				type: "POST",
+				url: "/send_invites/" + $(".idea_subject_viewer").attr("id").substring(1),
+				error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				success: function() {
+					sendMsg("<%= t.details.invites_sended %>","green");
+					$("#send_invites").attr("disabled", true);
+				}
+			});
+		})
+		//fix for empty users_participants
+		$("li.bit-box").each(function(){
+			var box = $(this);
+			if (box.text() == ""){
+				box.remove();
+			}
+		})
+		
+		//reordering
+		var complete = $("<div></div>");
+		var uncomplete = $("<div></div>");
+		var template = $("<div></div>");
+		var fullset = $("<div></div>");
+		$(".tasks").find("h3").each(function(){
+			task = $(this);
+			// $("#messages").append(task.next());
+			if (task.find('a').hasClass('task_title_completed')) {
+				task_cache = task;
+				task_detail_cache = task.next();
+				complete.prepend(task_detail_cache);
+				complete.prepend(task_cache);
+			} else if (task.find('a').hasClass('task_title_noncompleted')) {
+				task_cache = task;
+				task_detail_cache = task.next();
+				uncomplete.prepend(task_detail_cache);
+				uncomplete.prepend(task_cache);
+			} else {
+				task_cache = task;
+				task_detail_cache = task.next();
+				template.prepend(task_detail_cache);
+				template.prepend(task_cache);
+			};
+		});
+		$(".tasks").empty()
+		$(".tasks").append(uncomplete.html());
+		$(".tasks").append(complete.html());
+		$(".tasks").append(template.html());
+
+		//form section
+		$("#title_of_your_task").keydown(function(e){
+			if (e.keyCode == 13) {
+				$("#send_create_task").click();
+				return false;
+			}
+		});
+		$("#send_create_task").click(function(){
+			$("#send_create_task").attr("disabled", true);
+			var errors = "";
+			$(".invalid").removeClass("invalid")
+			// validate and process form here
+			var title = $("#title_of_your_task");
+			if (title.val() == "") {
+				title.addClass("invalid");
+				errors += "<%= t.errors.title_is_required %>"
+				title.focus();
+			}
+
+			if (errors != "") {
+				sendMsg(errors,"red")
+				return false;
+			};
+			$("#send_create_task").attr("disabled", true);
+			var dataString = 'title=' + encodeURIComponent(title.val()) + '&token=' + $("#send_create_task").next(".token").text();
+			title.val("")
+			$.ajax({
+				type: "POST",
+				url: "/create_task/"+$(".idea_subject_viewer").attr("id").substring(1),
+				data: dataString,
+				success: function() {
+					$("#send_create_task").attr("disabled", false);
+						sendMsg("<%= t.messages.task_created %>","green");
+						reload_bar($(".idea_subject_viewer").attr("id").substring(1));
+						actual_number = parseInt($("#idea_menu").find('li:first').find('.number').text());
+						$("#idea_menu").find('li:first').find('.number').text(actual_number + 1)
+						$("#idea_menu").tabs('load', $("#idea_menu").tabs('option', 'selected'));
+					}
+				});
+				return false;
+			});
+			
+			//PREVENT SELECTION
+			if($.browser.mozilla){//Firefox
+				$('h3.task_dragme').css('MozUserSelect','none');
+			}else if($.browser.msie){//IE
+				$('h3.task_dragme').bind('selectstart',function(){return false;});
+			}else{//Opera, etc.
+				$('h3.task_dragme').mousedown(function(){return false;});
+			}
+			
+			$(document).click(function(){
+				deselect_tasks();
+			})
+			$('h3.task_dragme').mouseenter(function() {
+				$(this).fadeTo(0,0.5);
+			});
+			$('h3.task_dragme').mouseleave(function() {
+				$(this).fadeTo(0,1);
+			});
+
+			//FOR THE SHIFT ACTION
+			var first_click = true;
+			var start;
+			var end;
+			
+			$('h3.task_dragme').click(function(e) {
+				if(e.shiftKey) {
+					if ($(this).hasClass('ui-state-hover')) {
+						$(this).fadeTo(200,0.5);
+						$(this).removeClass('ui-state-hover');
+					} else {
+						if (first_click) {
+							first_click = false;
+							deselect_tasks();
+							$(this).fadeTo(200,1);
+							$(this).addClass('ui-state-hover');
+							start = $('h3.task_dragme').index($(this));
+						} else {
+							first_click = true;
+							end = $('h3.task_dragme').index($(this));
+							if (start>end) {
+								start = start-1;
+								end = end-1;
+							};
+							$('h3.task_dragme').slice(Math.min(start,end)+1,Math.max(start,end)+1).toggleClass('ui-state-hover');
+						};
+					};
+				} else if (e.metaKey || e.altKey){
+					if ($(this).hasClass('ui-state-hover')) {
+						$(this).fadeTo(200,0.5);
+						$(this).removeClass('ui-state-hover');
+					} else {
+						$(this).fadeTo(200,1);
+						$(this).addClass('ui-state-hover');
+					};
+				} else {
+					var header = $(this)
+					header.css('outline','none');
+					select_only_one(header);
+					if(header.hasClass('current')) {
+						header.next('div').slideUp('fast',function() {
+							header.next('div').empty();
+							header.removeClass('current');
+						});
+					} else {
+						open_header = $('h3.task_dragme.current');
+						open_header.next('div').slideUp('fast',function() {
+							open_header.next('div').empty();
+							open_header.removeClass('current');
+						});
+
+						task_id = header.attr("id").substring(2)
+						container = header.next('div');
+						container.empty();
+						header.find('.task_title').append("<span id='to_del'><%= t.messages.loading %></span>");
+						$.ajax({
+							url: "/kuni/task/solutions/" + task_id,
+							error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+							success: function(data) {
+								$("#to_del").remove();
+								container.html(data);
+								container.slideToggle('fast',function() {
+									rebind_solutions();
+									header.toggleClass('current');
+								});
+							}
+						});
+					}
+				};
+				if ($('.ui-state-hover').size() < 1) {
+					$("#actions").slideUp();
+				} else {
+					$("#actions").slideDown();
+				}
+				
+				return false;
+			});
+			
+			$(".task_dragme").draggable({
+				start:function(){
+					$("#MyIdeasList").css({border:'2px dashed red'});
+				},
+				stop:function(){
+					$("#MyIdeasList").css({border:''});
+					if ($('.ui-state-hover').size() == 1) {
+						$(this).removeClass('ui-state-hover');
+					}
+				},
+				opacity: 0.6,
+				cursorAt: { right: 0, top:10 },
+				helper: function(){
+					select_only_one($(this));
+					if ($('.ui-state-hover').size() > 1) {
+						return $("<div>").append("<img src='img/tasks_icon.png'>");
+					} else {
+						return $("<div>").append("<img src='img/task_icon.png'>");
+					}
+				},
+				cursor: 'pointer',
+				refreshPositions: true,
+				revert: 'invalid',
+				addClasses: false,
+				zIndex: 2700,
+				appendTo: 'body',
+				containment: 'body'
+			});
+			bind_droppable();
+			
+			rebind_search_tasks("tasks");
+		};
+			
+// ================================================================================
+// = REBIND SEARCH FOR THE TASKS ------------------------------------------------ =
+// ================================================================================
+function rebind_search_tasks(call_from){
+	//count itens
+	var count = 0;
+	var target_parsed;
+	var number_parsed;
+	var clear_parsed;
+	if (call_from == "tasks") {
+		$(".tasks").find("h3").each(function(){
+			count++;
+		});
+		target_parsed = $(".tasks");
+		number_parsed = $("#showing_tasks_number");
+		clear_parsed = $("#srch_clear3");
+		field_parsed = $("#srch_fld3");
+	} else {
+		$(".tasks_network").find("h3").each(function(){
+			count++;
+		});
+		target_parsed = $(".tasks_network");
+		number_parsed = $("#showing_tasks_number_network");
+		clear_parsed = $("#srch_clear4");
+		field_parsed = $("#srch_fld4");
+	};
+	number_parsed.text(count);
+
+	field_parsed.keyup(function(event) {
+		target_parsed.scrollTop(0);
+		processKeyUp(clear_parsed,$(this),number_parsed,target_parsed);
+	});
+	function processKeyUp(btn, fld, showing, target){
+		btn.css({ "background":"white url('img/srch_r_f2.gif') no-repeat top left"});
+		if (fld.val() != "")
+		{
+			searchAndClear(showing,fld.val(),target);
+			btn.css({ "background":"white url('img/srch_r_f2.gif') no-repeat top left"});
+			btn.bind("click",function(){clearBtnClick(fld,btn,showing,target);});
+			} else if (fld.val() == "")
+			{
+				removeHidden(showing,target);
+				btn.css({ "background":"white url('img/srch_r.gif') no-repeat top left"});
+				btn.unbind("click",function(){clearBtnClick();});
+			}
+		};
+		function clearBtnClick (fldID,btnID,showing,target) {
+			fldID.val("");
+			btnID.css({ "background":"white url('img/srch_r.gif') no-repeat top left"});
+			removeHidden(showing,target);
+		};
+		function searchAndClear (showing,value,target) {
+			var count = 0;
+			target.find("h3").each(function () {
+				if (($(this).text().search(new RegExp(value, "i")) < 0) && ($(this).next().text().search(new RegExp(value, "i")) < 0)) {
+					$(this).hide();
+				} else {
+					$(this).show();
+					count++;
+				}
+			});
+			$(showing).text(count);
+		};
+		function removeHidden (showing,target) {
+			var count = 0;
+			target.find("h3").each(function(){
+				$(this).show();
+				count++;
+			});
+			$(showing).text(count);
+		};
+}		
+// ================================================================================
+// = TASKS BASICS FUNCTIONS ----------------------------------------------------- =
+// ================================================================================
+function selected_tasks() {
+	$("#actions").slideUp();
+	var tasks = [];
+	$('.ui-state-hover').each(function() {
+		tasks.push($(this).attr("id").substring(2));
+	});
+	return tasks;
+}
+
+function delete_tasks(){
+	var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+	var tasks = selected_tasks()
+	var dataString = 'tasks='+ tasks;
+	$.ajax({
+		type: "POST",
+		url: '/delete_tasks/' + kuni_id,
+		data: dataString,
+		error: function(response) {sendMsg('<%= t.errors.not_owner %>','#aa0000')},
+		success: function(data) {
+			sendMsg('<%= t.messages.task_deleted %>','green');
+			for (var i=0; i < tasks.length; i++) {
+				$('#tt'+tasks[i]).next().remove();
+				$('#tt'+tasks[i]).remove();
+				$("#srch_fld3").keyup();
+			};
+			reload_bar($(".idea_subject_viewer").attr("id").substring(1));
+			actual_number = $('h3.task_dragme').length;
+			$("#idea_menu").find('li:first').find('.number').text(actual_number)
+		}
+	});
+};
+
+function mark_as_completed(){
+	var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+	var tasks = selected_tasks()
+	var dataString = 'tasks='+ tasks;
+	$.ajax({
+		type: "POST",
+		url: '/mark_task_solved/' + kuni_id,
+		data: dataString,
+		error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+		success: function(data) {
+			$("#title_my").click();
+			$("#title_watched").click();
+			sendMsg('<%= t.messages.task_done %>','green');
+			for (var i=0; i < tasks.length; i++) {
+				if ($('#tt'+tasks[i]).find('.in_sync').length == 0) {
+					if ($('#tt'+tasks[i]).children('a').attr('class') == "task_title_completed") {
+						$('#tt'+tasks[i]).children('a').attr('class','task_title_noncompleted');
+					} else {
+						$('#tt'+tasks[i]).children('a').attr('class','task_title_completed');
+					}
+				}
+				$("#srch_fld3").keyup();
+			};
+			// reload_bar($(".idea_subject_viewer").attr("id").substring(1));
+		}
+	});
+};
+
+function close_tasks() {
+	var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+	var tasks = selected_tasks();
+	var dataString = 'tasks='+ tasks;
+	$.ajax({
+		type: "POST",
+		url: '/close_tasks/' + kuni_id,
+		data: dataString,
+		error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+		success: function(data) {
+			sendMsg('<%= t.messages.task_closed %>','green');
+			for (var i=0; i < tasks.length; i++) {
+				if ($('#tt'+tasks[i]).find(".lock").length == 0) {
+					if (!$('#tt'+tasks[i] + " span:first").hasClass("ui-icon-transferthick-e-w")) {
+						$('#tt'+tasks[i]).find(".task_title").append("<span class='lock'></span>");
+					}
+				} else {
+					$('#tt'+tasks[i]).find('.lock').remove();
+				}
+				$("#srch_fld3").keyup();
+			};
+			actual_number = $('h3.task_dragme').length;
+			$("#idea_menu").find('li:first').find('.number').text(actual_number)
+		}
+	});
+}
+function broke_syncs() {
+	var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+	var old_tasks = selected_tasks();
+	var tasks = []
+	for (var i=0; i < old_tasks.length; i++) {
+		if (!$('#tt'+old_tasks[i]).find(".ui-icon-transferthick-e-w").length == 0) {
+			tasks.push(old_tasks[i]);
+		};
+	};
+	var dataString = 'tasks='+ tasks;
+	
+	$.ajax({
+		type: "POST",
+		url: '/broke_syncs/' + kuni_id,
+		data: dataString,
+		error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+		success: function(data) {
+			sendMsg('<%= t.tasks.sync_broked %>','green');
+			for (var i=0; i < tasks.length; i++) {
+				if ($('#tt'+tasks[i]).find(".ui-icon-transferthick-e-w").length != 0) {
+					$('#tt'+tasks[i]).find(".ui-icon-transferthick-e-w").switchClass("ui-icon-transferthick-e-w","ui-icon ui-icon-circle-arrow-e")
+					$('#tt'+tasks[i]).find(".in_sync").remove();
+				};
+				$("#srch_fld3").keyup();
+			};
+			actual_number = $('h3.task_dragme').length;
+			$("#idea_menu").find('li:first').find('.number').text(actual_number)
+		}
+	});
+}
+			
+function deselect_tasks(){
+	$('.ui-state-hover').each(function() {
+		$("#actions").slideUp();
+		$(this).removeClass('ui-state-hover');
+	});
+}
+function select_all_tasks(){
+	$("#actions").slideDown();
+	$('h3.task_dragme').each(function() {
+		$(this).addClass('ui-state-hover');
+	});
+}
+
+function select_only_one(task) {
+	if (!task.hasClass('ui-state-hover')) {
+		deselect_tasks();
+		task.addClass('ui-state-hover');					
+	}
+}
+
+
+	// ===========================================================================
+	// = REBIND WATCHED LIST---------------------------------------------------- =
+	// ===========================================================================
+
+	function rebind_kunilistwatched(){
+		//count and ordering itens
+		var count = 0;
+		$("#scrollerwatched").find("li").each(function(){
+			if (($(this).attr("id") == "kuni_publics_watched") || ($(this).attr("id") == "kuni_privates_watched")){return}
+			if ($(this).children().hasClass('kuni_private')) {
+				$("#kuni_privates_watched").next().append($(this));
+			} else {
+				$("#kuni_publics_watched").next().append($(this));
+			};
+			count++;
+		});
+
+		if (count == 0  && $("#register_fields").length == 0) {
+			//$("#scrollerwatched").empty();//THE PROBLEM IS HERE
+			$("#scrollerwatched").load("/emptywatchedlist");
+		} else {
+			rebind_guestregister();
+		};
+
+		$("#watchedlistshowing").text(count);
+		
+		$(".close_icon").click(function(event){
+			event.stopPropagation();
+			kuni_id = $(this).parent().parent().parent().parent().parent().parent().attr("id");
+			
+			if (confirm('<%= t.messages.confirm_remove %>')) {
+				$.ajax({
+				  url: "/remove/"+kuni_id,
+				  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				  success: function(data) {
+					sendMsg('<%= t.messages.removed %>','green');
+					$("#"+kuni_id).remove();
+					}
+				});
+			}
+		})
+		
+		resizeAllWindows();
+		//set Tcha-Tcho's iscroll \o/
+		$('#WatchedIdeasList').iscroll({scrollType:'iscroll', dragSelector: '#scrollerwatched',acceptPropagatedEvent: true, firstAnimation: false});
+	}
+
+
+// =============================================================================
+// = REBIND SOLUTIONS -------------------------------------------------------- =
+// =============================================================================
+
+function rebind_solutions() {
+	var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+	
+	$(".timestamps").cuteTime(SETTINGS)
+	
+	$(".go_to_original").click(function(){
+		var kuni_id = $(this).attr("id").substring(4);
+		goto_kuni(kuni_id);
+	})
+	
+	$(".delete_solution").click(function(){
+		var button = $(this);
+		var solution_id = $(this).attr("id").substring(1);
+		$.ajax({
+			url: "/delete_solution/" + solution_id,
+		  	error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+		  	success: function(data) {
+			sendMsg('<%= t.messages.deleted %>','green');
+			if (button.parent().prev().prev().prev().hasClass('solution_author_thissolve')) {
+				button.parent().parent().parent().parent().prev().find('a').attr('class','task_title_noncompleted');
+				button.parent().parent().parent().parent().parent().parent().prev().find('a').attr('class','task_title_noncompleted');
+			}
+			
+			actual_number = button.parent().parent().parent().parent().prev().find('.number').text();
+			button.parent().parent().parent().parent().prev().find('.number').text(actual_number - 1);
+
+			$('#ss'+solution_id).remove();
+			$("#title_my").click();
+			$("#title_watched").click();
+			}
+		});
+	});
+	$(".solved").click(function(){
+		var button = $(this);
+		var solution_id = $(this).attr("id").substring(2);
+		$.ajax({
+			url: "/solved/" + solution_id,
+		  	error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+		  	success: function(data) {
+			sendMsg('<%= t.solutions.solved %>','green');
+			button.parent().parent().parent().find('.solution_line').each(function() {
+				$(this).find('.solution_author_thissolve').attr('class', 'solution_author_thisnotsolve');
+			});
+			button.parent().prev().prev().prev().switchClass('solution_author_thissolve');
+			button.parent().parent().parent().parent().prev().find('a').attr('class','task_title_completed');
+			$("#title_my").click();
+			$("#title_watched").click();
+			}
+		});
+	});
+	$("#solution_form_text").focus(function(){
+		deselect_tasks();
+	})
+	
+	rebind_bbcode(".solution_message","#solution_form_text");
+	rebind_slider("solution");
+};
+
+// =============================================================================
+// = REBIND NETWORK KUNIS ---------------------------------------------------- =
+// =============================================================================
+
+function rebind_network_kunis() {
+	var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+	
+	$(".timestamps").cuteTime(SETTINGS)
+	
+	$(".network_line").click(function(){
+		var kuni_id = $(this).attr("id").substring(4);
+		goto_kuni(kuni_id);
+	})
+};
+
+// ===================================================================================
+// = REBIND SLIDER ----------------------------------------------------------------- =
+// ===================================================================================
+function rebind_slider(from){
+	rebind_send_links();
+	var first_position = 0;
+	
+	$("#unlock-handle").draggable({
+		start: function(){
+			$("#unlock-text").fadeTo('slow',0);
+			first_position = parseInt($("#unlock-slider").position().left);
+		},
+		stop: function(e,ui){
+			var actual_position = ui.position.left - first_position;
+			if (actual_position > 96) {
+				$("#unlock-handle").hide();
+				$("#unlock-slider-wrapper").fadeTo('fast',0.5);
+				$("#unlock-text").fadeTo('fast',0);
+				if (from == "comment") {
+					process_comment(first_position);
+				} else if (from == "user") {
+					process_message(first_position);
+				} else {
+					process_solution(first_position);
+				}
+			} else {
+				$("#unlock-handle").animate({left: first_position},400);
+				$("#unlock-text").fadeTo('fast',1);
+			};
+		},
+		axis: 'x',
+		addClasses: true,
+		zIndex: 2700,
+		appendTo: '#unlock-slider',
+		containment: 'parent',
+		refreshPositions: true
+	});
+	function process_solution(back_slider){
+		deselect_tasks();
+		var button = $("#unlock-slider-wrapper");
+		var taskid = $('#solution_form_send').parent().parent().parent().prev().attr("id").substring(2);
+		var errors = "";
+		$(".invalid").removeClass("invalid")
+		// validate and process form here
+		var solution = $("#solution_form_text");
+		if (solution.val() == "") {
+			solution.addClass("invalid");
+			errors += "<%= t.errors.field_is_empty %>";
+			solution.focus();
+		}
+		var links = [];
+		var link_error = '';
+		$(".solution_form_link.changed").each(function(){
+			var parsed_url = test_url($(this).val());
+			if (parsed_url == 'x') {
+				$(this).addClass("invalid");
+				link_error += 'x'
+			} else {
+				links.push(parsed_url);
+			}
+		});
+		
+		if (link_error != '') {
+			errors += "<%= t.errors.invalid_link %>"
+		}
+		
+		if (errors != "") {
+			$("#unlock-handle").show();
+			$("#unlock-handle").animate({left: back_slider},400);
+			$("#unlock-slider-wrapper").fadeTo('fast',1);
+			$("#unlock-text").fadeTo('fast',1);
+			sendMsg(errors,"red")
+			return false;
+		};
+		
+		var dataString = 'solution='+ encodeURIComponent(solution.val()) + '&links=' + links + '&token=' + $("#unlock-slider-wrapper").children(".token").text();
+		solution.val("");
+		$.ajax({
+			type: "POST",
+			url: '/add_solution/'+taskid,
+			data: dataString,
+			success: function(data) {
+				sendMsg("<%= t.messages.posted %>","green");
+				var container = button.parent().parent().parent().parent();
+				container.empty();
+				container.html("<div class='ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom'><%= t.messages.loading %></div>");
+				$.ajax({
+					url: "/kuni/task/solutions/" + taskid,
+					error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+					success: function(data) {
+						var actual_number = parseInt(container.prev().find('.number').text());
+						container.prev().find('.number').text(actual_number + 1);
+						container.html(data);
+						rebind_solutions();
+					}
+				});
+			}
+		});
+		return false;
+	};//end
+	
+	function process_comment(back_slider){
+			$(".invalid").removeClass("invalid")
+			// validate and process form here
+
+			var commentary = $("#commentary");
+			if (commentary.val() == "") {
+				$("#unlock-handle").show();
+				$("#unlock-handle").animate({left: back_slider},400);
+				$("#unlock-slider-wrapper").fadeTo('fast',1);
+				$("#unlock-text").fadeTo('fast',1);
+				
+				commentary.addClass("invalid");
+				sendMsg("<%= t.errors.field_is_empty %>","red")
+				commentary.focus();
+				return false;
+			}
+			var dataString = 'commentary='+ encodeURIComponent(commentary.val()) + '&token=' + $("#unlock-slider-wrapper").children(".token").text();
+			commentary.val("");
+			$.ajax({
+				type: "POST",
+				url: "/add_comment/"+$(".idea_subject_viewer").attr("id").substring(1),
+				data: dataString,
+				error: function(){sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				success: function() {
+					sendMsg("<%= t.messages.posted %>","green");
+					$("#idea_menu").tabs('load', $("#idea_menu").tabs('option', 'selected'));
+				}
+			});
+			return false;
+	}
+	function process_message(back_slider){
+			$(".invalid").removeClass("invalid")
+			// validate and process form here
+
+			var message = $("#message");
+			if (message.val() == "") {
+				$("#unlock-handle").show();
+				$("#unlock-handle").animate({left: back_slider},400);
+				$("#unlock-slider-wrapper").fadeTo('fast',1);
+				$("#unlock-text").fadeTo('fast',1);
+				
+				message.addClass("invalid");
+				sendMsg("<%= t.errors.field_is_empty %>","red")
+				message.focus();
+				return false;
+			}
+			var user_id = $(".idea_subject_viewer").attr("id").substring(1);
+			var dataString = 'message='+ encodeURIComponent(message.val()) + '&token=' + $("#unlock-slider-wrapper").children(".token").text();
+			$.ajax({
+				type: "POST",
+				url: "/add_message/"+user_id,
+				data: dataString,
+				error: function(){sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				success: function() {
+					sendMsg("<%= t.messages.posted %>","green");
+					view_kuni('user', user_id, 'searched',true);
+				}
+			});
+			return false;
+	}
+};
+
+function test_url(url) {
+	test_result = /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url);
+	if (test_result) {
+		return encodeURIComponent(url);
+	} else {
+		return 'x';
+	}
+}
+
+// function human_sizes() {
+// 	$(".file_size").each(function(){
+// 		var byteSize = Math.round(parseInt($(this).text()) / 1024 * 100) * .01;
+// 		var suffix = 'KB';
+// 		if (byteSize > 1000) {
+// 			byteSize = Math.round(byteSize *.001 * 100) * .01;
+// 			suffix = 'MB';
+// 		}
+// 		var f = byteSize;
+// 		f *= 100;
+// 		f = Math.round(f)/100;
+// 		$(this).text(f + suffix);
+// 	})
+// }
+
+// =============================================================================
+// = REBIND INSERT LINKS ----------------------------------------------------- =
+// =============================================================================
+
+function rebind_send_links() {
+	$(".solution_form_link").fadeIn();
+	$(".solution_form_link").focus(function(){
+		var link_box = $(this);
+		if (link_box.val() == "<%= t.solutions.link %>"){
+			link_box.val("");
+			link_box.css('color','black');
+		}
+	});
+	$(".solution_form_link").blur(function(){
+		if ($(this).val() == "") {
+			$(this).val("<%= t.solutions.link %>");
+			$(this).css('color','lightgrey');
+			$(this).removeClass("changed");
+		}
+	});
+	$(".solution_form_link").keyup(function(){
+		if ($(this).val() != "") {
+			$(this).addClass("changed");
+			if($(".solution_form_link").not(".changed").length < 1){
+				$(this).parent().parent().append($("<div style='display:none;' class='link_container'><input class='solution_form_link' type='text' value='<%= t.solutions.link %>' /><span class='status'></span></div>").fadeIn("slow"));
+				rebind_send_links();
+			};
+			var parsed_url = test_url($(this).val());
+			var status_box = $(this).next();
+			if (parsed_url == 'x') {
+				status_box.html("<span class='link_error'>&bull;</span>");
+				return false;
+			} else {
+				status_box.html("<span class='link_accept'>&bull;</span>");
+			}	
+		} else {
+			if ($(this).hasClass("changed")) {
+				$(this).parent().fadeOut(function(){$(this).remove()});
+			}
+		};
+	});
+};
+
+// =============================================================================
+// = REBIND MY KUNI LIST ----------------------------------------------------- =
+// =============================================================================
+	function rebind_kunilistmy() {
+		//count and ordering itens
+		var count = 0;
+		$("#scrollermy").find("li").each(function(){
+		if (($(this).attr("id") == "kuni_publics_my") || ($(this).attr("id") == "kuni_privates_my")){return}
+		if ($(this).children().hasClass('kuni_private')) {
+				$("#kuni_privates_my").next().append($(this));
+			} else {
+				$("#kuni_publics_my").next().append($(this));
+			};
+		count++;
+		});
+
+		if (count == 0 && $("#login_fields").length == 0) {
+			$("#scrollermy").empty();
+			$("#scrollermy").load("/emptymylist");
+			$("#create_kuni_bt").click();
+		} else {
+			rebind_guestmy();
+		};
+		$("#mylistshowing").text(count);
+		
+		$(".trash_icon").click(function(event){
+			event.stopPropagation();
+			var kuni_id = $(this).parent().parent().parent().parent().parent().parent().attr("id");
+
+			if (confirm('<%= t.messages.confirm_delete %>')) {
+				$.ajax({
+				  url: "/delete/"+kuni_id,
+				  error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				  success: function(data) {
+					sendMsg('<%= t.messages.deleted %>','green');
+					$("#"+kuni_id).remove();
+					}
+				});
+			}
+		})
+		
+		
+		resizeAllWindows();
+		//set Tcha-Tcho's iscroll \o/
+		$('#MyIdeasList').iscroll({scrollType:'iscroll', dragSelector: '#scrollermy',acceptPropagatedEvent: true, firstAnimation: false});
+		bind_droppable();
+	}
+
+function bind_droppable() {
+	$(".r_box").droppable({
+		tolerance: 'pointer',
+		addClasses: false,
+		accept: '.task_dragme,#all_title',
+		activeClass: 'r-box-droppable-ican',
+		hoverClass: 'r-box-droppable',
+		drop: function(event, ui) {
+						var kuni_box = $(this)
+						var kuni_id = kuni_box.parent().parent().attr("id");
+						var kuni_from_id = $(".idea_subject_viewer").attr("id").substring(1);
+						var kuni_from = $("#" + kuni_from_id);
+						var tasks = [];
+						if (ui.draggable.is(".task_dragme")) {
+							tasks = selected_tasks()
+						} else if (ui.draggable.is("#all_title")) {
+							tasks.push(ui.draggable.find(".idea_title_viewer").attr("id").substring(1));
+						}
+						if (kuni_from.children('div').hasClass("kuni_private") && kuni_box.parent().hasClass("kuni_public")){
+							if (!confirm('<%= t.messages.confirm_make_public %>')) {
+								return false;
+							}
+						}
+						
+						var dataString = 'tasks='+ tasks + '&kuni_from=' + kuni_from_id;
+						$.ajax({
+							type: "POST",
+							url: '/copy_tasks/' + kuni_id,
+							data: dataString,
+							error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+							success: function(data) {
+								kuni_box.effect("bounce");
+								reload_bar(kuni_id);
+								sendMsg('<%= t.tasks.task_copied %>' + ": " + kuni_id,'green');
+								if (kuni_id == $(".idea_subject_viewer").attr("id").substring(1)) {
+									$("#idea_menu").tabs('load', $("#idea_menu").tabs('option', 'selected'));
+								};
+							}
+						});
+					}
+	});
+}
+
+// ===================================================================================
+// = REBIND SEARCH AREA ------------------------------------------------------------ =
+// ===================================================================================
+function rebind_search() {
+	$(".search_result_item").click(function(){
+		$(".search_selected").switchClass("search_unselected");
+		path = $(this).parent().attr("id");
+		if (path == 'kuni_id') {
+			error_message = "<%= t.errors.invalid_id %>"
+			path = "kuni"
+		} else {
+			error_message = "<%= t.errors.generic_error %>"			
+		};
+		$(this).attr("class","search_selected");
+		var kuni_id = $(this).attr("id").substring(2);
+		view_kuni(path,kuni_id,'searched',true);
+	});
+};
+// ===================================================================================
+// = REBIND EMPTY SEARCH ID -------------------------------------------------------- =
+// ===================================================================================
+function load_emptyviewer() {
+	$(".kuni_selected").attr("class", "kuni_unselected");
+	$(".kuni_images").fadeTo("slow",0.3);
+	
+	$("#viewer_container").load("/emptyviewer", callback);
+	function callback() {
+		var tips = $(".tip").get();
+		$("#tipcontainer").html($(".tip").get(Math.floor(Math.random() * tips.length)).innerHTML);
+		
+		//form section
+		$("#kuni_id").keydown(function(e){
+			if (e.keyCode == 13) {
+				$("#send_search_id").click();
+				return false;
+			}
+		});
+		$("#send_search_id").click(function(){
+			$("#send_search_id").attr("disabled", true);
+			var errors = "";
+			$(".invalid").removeClass("invalid")
+			// validate and process form here
+			var kuni_id = $("#kuni_id");
+			if (kuni_id.val() == "") {
+				kuni_id.addClass("invalid");
+				sendMsg("<%= t.errors.field_is_empty %>","red")
+				kuni_id.focus();
+				return false
+			}
+			var kuni_id = $("#kuni_id").val().replace(/^\s*|\s*$/g,"");//trimmed
+			goto_kuni(kuni_id);
+		});
+	}
+};
+
+function load_home() {
+	$(".kuni_selected").attr("class", "kuni_unselected");
+	$(".kuni_images").fadeTo("slow",0.3);
+	
+	$("#viewer_container").load("/load_home", callback);
+	function callback() {
+		$.ajax({
+			url: "<%= t.home.home_link %>",
+			success: function(data) {
+				$("#home_container").html(data);
+				$("#how_to_home").click(function(){$("#howto_button").click();})
+				}
+		});
+		resizeAllWindows();
+	}
+}
+
+function load_faq() {
+	$.ajax({
+		url: "<%= t.home.faq_link %>",
+		success: function(data) {$("#viewer_container").html(data);resizeAllWindows();}
+	});
+}
+
+function load_howto() {
+	$.ajax({
+		url: "<%= t.home.howto_link %>",
+		success: function(data) {$("#viewer_container").html(data);resizeAllWindows();}
+	});
+}
+
+// ===================================================================================
+// = REBIND COMMENTS---------------------------------------------------------------- =
+// ===================================================================================
+
+	function rebind_comments() {
+		$("#commentary").focus();
+		
+		$(".timestamps").cuteTime(SETTINGS)
+		
+		var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+		$(".close_comments").change(function(){
+			$.ajax({
+				type: "POST",
+				url: '/close_comments/' + kuni_id,
+				error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+				success: function(data) {
+					sendMsg('<%= t.messages.changed %>','green');
+				}
+			});
+		});
+		
+		//form section
+		$(".exclude_comment").click(function(){
+			comment_id = $(this).attr("id").substring(1);
+			$.ajax({
+				url: "/exclude_comment/" + comment_id,
+			  	error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			  	success: function(data) {
+				sendMsg('<%= t.messages.comment_deleted %>','green');
+				$('#cc'+comment_id).remove();
+				}
+			});
+		});
+				
+		rebind_bbcode(".text_comment","#commentary");
+		rebind_slider("comment");
+	}
+// =================================================================================
+// = REBIND NETWORK--------------------------------------------------------------- =
+// =================================================================================
+function rebind_network(){
+	rebind_search_tasks("network");
+	
+	$('h3.task_network_header').mouseenter(function() {
+		$(this).fadeTo(0,0.5);
+	});
+	$('h3.task_network_header').mouseleave(function() {
+		$(this).fadeTo(0,1);
+	});
+	
+	$('h3.task_network_header').click(function(e) {
+			var header = $(this)
+			if(header.hasClass('current')) {
+				header.next('div').slideUp('fast',function() {
+					header.next('div').empty();
+					header.removeClass('current');
+				});
+			} else {
+				open_header = $('h3.task_dragme.current');
+				open_header.next('div').slideUp('fast',function() {
+					open_header.next('div').empty();
+					open_header.removeClass('current');
+				});
+
+				task_id = header.attr("id").substring(2)
+				container = header.next('div');
+				container.empty();
+				header.find('.task_title').append("<span id='to_del'><%= t.messages.loading %></span>");
+				$.ajax({
+					url: "/syncheds/" + task_id,
+					error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+					success: function(data) {
+						$("#to_del").remove();
+						container.html(data);
+						container.slideToggle('fast',function() {
+							rebind_network_kunis();
+							header.toggleClass('current');
+						});
+					}
+				});
+			}
+		
+		return false;
+	});
+	
+};
+
+// =================================================================================
+// = REBIND DETAILS -------------------------------------------------------------- =
+// =================================================================================
+
+function rebind_details() {
+	var kuni_id = $(".idea_subject_viewer").attr("id").substring(1);
+	var dirty = false;
+	$('textarea[name=bbcode]').css('color','lightgrey');
+	$('textarea[name=bbcode]').blur(function(){
+		if (!dirty) {
+			$(this).css('color','lightgrey');
+			$('#save_details').attr("disabled", true);
+		};
+	})
+	$('textarea[name=bbcode]').keyup(function(){
+		$(this).css('color','black');
+		$('#save_details').attr("disabled", false);
+		dirty = true;
+	});
+	
+	rebind_bbcode("#details_text","#text_details");
+	
+	$('#save_details').click(function(){
+		var dataString = 'new_details='+ encodeURIComponent($("#text_details").val());
+		$.ajax({
+			type: "POST",
+			url: "/kuni/change_details/" + kuni_id,
+			data: dataString,
+			error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			success: function(data) {
+				sendMsg('<%= t.details.saved %>','green');
+				dirty = false;
+				$('textarea[name=bbcode]').blur();
+			}
+		});
+		return false;
+	});
+	$('#change_image').click(function(){
+		var dataString = 'image='+ encodeURIComponent($("#url_image").val());
+		$.ajax({
+			type: "POST",
+			url: "/kuni/change_image/" + kuni_id,
+			data: dataString,
+			error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			success: function(data) {
+				sendMsg('<%= t.details.image_saved %>','green');
+				$("#title_my").click();
+			}
+		});
+		return false;
+	});
+	$("#tags").keydown(function(e){
+		if (e.keyCode == 13) {
+			$("#update_tags").click();
+			return false;
+		}
+	});
+	
+	$('#update_tags').click(function(){
+		var values = $("#tags").val().split(',');
+		var cleaned_values = [];
+		var ready_values = "";
+		for (var i=0; i < values.length; i++) {			
+			var clean_value = values[i].replace(/^\s*|\s*$/g,"");//trim
+			cleaned_values.push(clean_value);
+		};
+		for (var i=0; i < cleaned_values.length; i++) {			
+			// if (uniqueness(cleaned_values[i], cleaned_values)) {
+				ready_values += encodeURIComponent(cleaned_values[i]) + ",";
+			// };
+		};
+		var dataString = 'tags='+ ready_values;
+		$.ajax({
+			type: "POST",
+			url: "/kuni/update_tags/" + kuni_id,
+			data: dataString,
+			error: function(response) {sendMsg('<%= t.errors.generic_error %>','#aa0000')},
+			success: function(data) {
+				sendMsg('<%= t.details.tags_saved %>','green');
+			}
+		});
+		return false;
+	});
+}
+// 
+// function uniqueness(tag, arr_tags) {
+// 	if (tag == '') {
+// 		return false
+// 	};
+// 	dirty = 0
+// 	for (var i=0; i < arr_tags.length; i++) {
+// 		console.log(arr_tags[i] +  "==" + tag)
+// 		if (arr_tags[i] == tag) {
+// 			dirty += 1;
+// 		} else {
+// 			dirty += 0;
+// 		};		
+// 	};
+// 	console.log(dirty)
+// 	if (dirty > 1){
+// 		return false
+// 	} else {
+// 		return true
+// 	}
+// };
+
+// ==============================================================================
+// = REBIND PEOPLE LIST ------------------------------------------------------- =
+// ==============================================================================
+
+function rebind_p_list() {
+	var result = $("#feedback").empty();
+	$("#selectable").selectable({
+		start: function(){
+			result.empty();
+		},
+		stop: function(){
+			var count = 0;
+			$(".ui-selected", this).each(function(){
+				var index = $("#selectable li").index(this);
+				count ++;
+			});
+			if (count == 1) {
+				if ($("#select2").length > 0) {
+					result.append("<input type='button' value='<%= t.index.apply %>' id='apply_p_list_bt'>&nbsp;");
+				}
+				result.append("<input type='button' value='<%= t.empty_lists.go_view %>' id='open_p_list_bt'>&nbsp;<input type='button' value='<%= t.read_kuni.remove %>' id='remove_p_list_bt'>")
+			} else {
+				if ($("#select2").length > 0) {
+					result.append("<input type='button' value='<%= t.index.apply %>' id='apply_p_list_bt'>&nbsp;");
+				}
+				result.append("<input type='button' value='<%= t.read_kuni.remove %>' id='remove_p_list_bt'>")
+			}
+			rebind_p_list_selection();
+			sendMsg("Escolha uma opção abaixo baixo da lista", "#4173CC");
+		}
+	});
+};
+function rebind_p_list_selection() {
+	$("#open_p_list_bt").click(function(){
+		sendMsg(">>>>   " + $(".ui-selected").text() + "   <<<<", "#4173CC");
+		view_kuni("user",$(".ui-selected").attr("id"),'searched',true);
+		$("#feedback").empty();
+	});
+	$("#remove_p_list_bt").click(function(){
+		var to_del = "";
+		$(".ui-selected").each(function(){
+			to_del += "," + $(this).attr("id");
+		});
+		var dataString = 'to_del=' + to_del;
+		$.ajax({
+			type: "POST",
+			url: "/remove_from_p_list",
+			data: dataString,
+			error:function(){sendMsg('<%= t.errors.generic_error %>', '#aa0000')},
+			success: function() {
+				reload_p_list()
+				sendMsg("<%= t.messages.removed %>", "#4173CC");
+			}
+		});
+	});
+	$("#apply_p_list_bt").click(function(){
+		var users = "";
+		$(".ui-selected").each(function(){
+			users += "," + $(this).text()
+		});
+		$("#select2").trigger("addItem",[{"title":"i", "value":users}]);
+		$("#feedback").empty();
+	});
+	
+}
+reload_p_list()
+function reload_p_list() {
+	$("#selectable").load("/p_list",rebind_p_list())
+}
+
+$("#user_p_list").click(function(){
+	$("#watched").fadeTo("slow", 0.30)
+	$("#p_list").animate({ 
+	        width: "21%",
+			opacity: 0.90
+	      }, 1000 );
+	$(this).effect("bounce");
+});
+$("#close_p_list").click(function(){
+	$("#watched").fadeTo("slow", 1)
+	$("#p_list").animate({ 
+	        width: "0%",
+			opacity: 0
+	      }, 500 );
+});
+
+// =================================================================
+// = BBCODE PARSER ----------------------------------------------- =
+// =================================================================
+
+function parse_bbcode(text) {
+	/*
+		TODO : include colors!
+	*/
+	var txt = text;
+	txt = txt.replace(/</g,'&lt;');
+	txt = txt.replace(/>/g,'&gt;');
+	txt = txt.replace(/[\r\n]/g,'%lb%');
+	
+	var find	= [/\[b\](.*?)\[\/b\]/gi,
+	        	   /\[i\](.*?)\[\/i\]/gi,
+	        	   /\[u\](.*?)\[\/u\]/gi,
+	        	   /\[size=(8\d|9\d|1\d\d|200)](.*?)\[\/size\]/gi,
+	        	   /\[url(?:\=?)(.*?)\](.*?)\[\/url\]/gi,
+	        	   /\[img(.*?)\](.*?)\[\/img\]/gi,
+	        	   /(?:%lb%|\s)*\[code(?:\=?)(?:.*?)\](?:%lb%|\s)*(.*?)(?:%lb%|\s)*\[\/code\](?:%lb%|\s)*/gi,
+	        	   /(?:%lb%|\s)*\[quote(?:\=?)(.*?)\](?:%lb%|\s)*(.*?)(?:%lb%|\s)*\[\/quote\](?:%lb%|\s)*/gi,
+	        	   /\[list(.*?)\](.*?)\[\*\](.*?)(?:%lb%|\s)*(\[\*\].*?\[\/list\]|\[\/list\])/i,
+	        	   /(?:%lb%|\s)*\[list\](?:%lb%|\s)*(.*?)(?:%lb%|\s)*\[\/list\](?:%lb%|\s)*/gi,
+	        	   /(?:%lb%|\s)*\[list=(\d)\](?:%lb%|\s)*(.*?)(?:%lb%|\s)*\[\/list\](?:%lb%|\s)*/gi,
+	        	   /(?:%lb%){3,}/g
+	        	   ];
+	var replace	= ['<b>$1<\/b>',
+	           	   '<i>$1<\/i>',
+	           	   '<u>$1<\/u>',
+	           	   '<span style="font-size:$1%;">$2</span>',
+	           	   '<a href="$1" target=\"blank\">$2</a>',
+	           	   '<div class="usrimg"><img $1 src="$2" /></div>',
+	           	   '<pre><code>$1</code></pre>',
+	           	   '<blockquote>$2</blockquote>',
+	           	   '[list$1]$2<li>$3</li>$4',
+	           	   '<ul>$1</ul>',
+	           	   '<ol start=$1>$2</ol>',
+	           	   '%lb%%lb%'
+	           	   ];
+
+	for(var i in find) {
+		txt = txt.replace(find[i],replace[i]);
+		if(i == 8) while(txt.match(find[i],replace[i])) txt = txt.replace(find[i],replace[i]); // fix [*] so that they only work inside [/list]
+	}
+	
+	txt = txt.replace(/%lb%/g,'<br />');
+	return txt;
+}
+
+function rebind_bbcode(element_to_parse, element_to_config) {
+	if ($(element_to_config).length != 0){
+		$(element_to_config).bbcodeeditor({
+			bold:$('.bold'),italic:$('.italic'),underline:$('.underline'),link:$('.link'),quote:$('.quote'),code:$('.code'),image:$('.image'),
+			usize:$('.usize'),dsize:$('.dsize'),nlist:$('.nlist'),blist:$('.blist'),litem:$('.item'),
+			back:$('.back'),forward:$('.forward'),back_disable:'btn back_disable',forward_disable:'btn forward_disable',
+			exit_warning:true,preview:$('.preview')
+		});
+	};
+	
+	$(element_to_parse).each(function(){
+		var txt = parse_bbcode($(this).text());
+		$(this).html(txt)
+	})
+}
+
+////////////////////////////////////////////////////////////////
+
+function goto_kuni(kuni_id) {
+	var list = $("#" + kuni_id).parent().parent().attr("id");
+	if (list == 'my_ideas_listing') {
+		view_kuni("kuni",kuni_id,'my',true);
+	} else if (list == 'watched_ideas_listing'){
+		view_kuni("kuni",kuni_id,'watched',true);
+	} else {
+		view_kuni("kuni",kuni_id,'searched',true);		
+	}
+}
+	function sendMsg(msg,color){
+		$('#messages').stop();
+		$('#messages').text(msg);
+	    $("#messages").animate({backgroundColor: color},400,function(){$("#messages").animate({backgroundColor: '#fff'},7000, function(){ $('#messages').text("empty") })});
+	}
+	
+	$("#title_my").click();
+	$("#title_watched").click();
+	
+	//firstload
+	var home_id = "<%= @home_id %>";
+	var home_path = "<%= @home_path %>";
+	var guest = "<%= @guest %>";
+	$.ajax({
+		url: "<%= t.index.tips_link %>",
+		success: function(data) {
+			$("#tips").html(data);
+			if (home_path != 'none') {
+				if (home_path == "user") {
+					if (home_id == "not_found") {
+						alert("<%= t.messages.not_found %>)")
+					} else {
+						view_kuni("user",home_id,'searched',true);
+					}
+				} else if (home_path == "kuni") {
+					if (home_id == "not_found") {
+						alert("<%= t.messages.not_found %>)")
+					} else {
+						goto_kuni(home_id);
+					}
+				}
+			} else if (guest == 'true') {				
+				load_home();
+			} else {
+				load_emptyviewer();
+			}
+		}
+	});
+		
+});

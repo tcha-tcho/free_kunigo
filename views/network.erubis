@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<div>
+	<div class="ui-state-default" style="font-size:80%;padding:10px">
+		<div><span class="number"><%= @full_copy_count %></span> <%= t.network.full_copy %></div>
+	</div>
+<% if !@tasks_count.nil? %>
+	<div id="tasks_network">
+		<div id="network_details">
+			<div id="applesearch3">
+				<span class="sbox_l"></span><span class="sbox"><input type="text" id="srch_fld4" /></span><span class="sbox_r" id="srch_clear4"></span>
+				<div id="showing_tasks"><span><%= t.tasks.showing %>: </span><span id="showing_tasks_number_network"> (...) </span></div>
+			</div>
+			<%= t.network.title %>
+		</div>		
+		<div class="tasks_network ui-accordion ui-widget ui-helper-reset">
+				<% @tasks_count.each do |task| %>
+				<h3 id="tt<%= task[0].id %>" class="task_network_header ui-accordion-header ui-helper-reset ui-state-default ui-corner-all">
+					<span class="ui-icon ui-icon-circle-arrow-e"/>
+						<a>
+						<div class="task_title">
+							<span class="task_title_number"><span class="number"><%= task[1] %></span></span>
+							<%= "<span class='lock'/>" if task[0].closed %>
+							<%== task[0].title %>
+						</div>
+						</a>
+				</h3>
+		     	<div class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom" ></div>
+				<% end %>
+		</div><br>	
+	</div>
+<% end %>
+			
+</div>
+</body></html>

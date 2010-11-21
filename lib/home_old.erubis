@@ -1,0 +1,852 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<!-- standalone page styling (can be removed)-->
+	<link rel="stylesheet" type="text/css" href="demo-area.htm_files/standalone.css">
+
+	<title>Kunigo!</title>
+	
+	<!-- Full version of jQuery Tools + jQuery 1.3.2 -->
+	<script src="../javascripts/opened/jquery-1.3.2.min.js" type="text/javascript"></script>
+	<script src="../javascripts/opened/jquery.tools.min.js" type="text/javascript"></script>
+<!-- without body tag IE may have unprodictable behaviours -->
+</head><body>
+
+<style>
+body {padding:0;text-align: center;}
+.invalid {
+	border: 2px dashed red;
+}
+#content {
+	padding-top:10px;
+	width:800px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+}
+#top {
+	display:none;
+	margin:0;
+	height:140px;
+}
+#center {
+}
+#bottom {
+	padding:3px;
+	padding-right:95px;
+	color:gray;
+	font-size:70%;
+	text-align:right;
+	float:right;
+}
+#logo {
+	height:550px;
+	width:105px;
+	display:inline-block;
+	float:left;
+}
+#scrollcontainer {
+	padding-left:30px;
+	display:inline-block;
+	float:left;
+}
+#login_fields {
+	width:200px;
+	float:left;
+	display:inline-block;
+}
+#login_fields span {
+	float:left;
+	display:inline-block;
+}
+#register_fields {
+	padding-left:15px;
+	margin-bottom:10px;
+	border-left: 1px solid #CCC;
+	width:420px;
+	float:left;
+	display:inline-block;
+}
+#register_fields span {
+	float:left;
+	display:inline-block;
+}
+.title_form_view {
+	color:lightgrey;
+	font-size:15px;
+	margin-right:10px;
+	font-weight:bold;
+	font-family:Arial;
+	text-align:center;
+}
+.textlogin {
+ font-size: 20px;
+ color: #EAD8F6;
+ background-color: #fbf4ff;
+ border: 1px solid white;
+ width: 150px;
+}
+.textlogin .clearpassword {
+	display:none;
+}
+.textlogin_edit {
+	color: #7f007f;
+}
+.textloginbutton {
+ font-size: 20px;
+ color: #fbf4ff;
+ background-color: #7f007f;
+ border: 1px solid #ead8f6;
+}
+.textloginbutton:hover {
+ color: #7f007f;
+ background-color: #fbf4ff;
+ cursor: pointer;
+}
+
+.textregister {
+ float:left;
+	display:inline-block;
+ font-size: 12px;
+ color: #99CCCC;
+ background-color: #effbfb;
+ border: 1px solid white;
+ width: 305px;
+ height: 20px;
+}
+.textregister_edit {
+	color: black;
+}
+.textregisterbutton {
+ margin-top:6px;
+ font-size: 15px;
+ color: #effbfb;
+ background-color: #009999;
+ border: 1px solid #cdeeee;
+}
+.textregisterbutton:hover {
+ color: #009999;
+ background-color: #effbfb;
+ cursor: pointer;
+}
+#register_fields div {
+}
+.status {
+	float:left;
+	display:inline-block;
+	padding-left:5px;
+}
+#scroll {
+	float:left;
+	display:inline-block;
+	position:relative;
+	height:500px;
+	overflow:hidden;
+	width:533px;
+	padding:15px;
+	padding-top:0px;
+}
+#tools {
+	width:9999em;
+	position:absolute;
+	height:400px;
+}
+
+.tool {
+	float:left;
+	display:inline-block;
+	width:1000px;
+	height:460px;
+	padding-left:15px;
+	background-repeat:no-repeat;
+	background-position:0 -40px;
+}
+
+.details {
+	background-color:#fff;
+	color:#666;
+	float:left;
+	font-size:20px;
+	margin:270px 0 0 0;
+	padding:10px 60px;
+	width:330px;
+}
+
+#thumbs {
+	background:url(../img/home-navi3.gif) no-repeat;
+	height:97px;
+	position:absolute;
+	top:410px;
+	width:580px;
+	left:-8px;
+	border-top: 3px solid black;
+}
+
+.t a {
+	background:transparent url(../img/home-navi3.gif) no-repeat scroll -21px -100px;
+	margin-left:11px;
+	display:block;
+	width:87px;
+	float:left;
+	height:97px;
+	cursor:pointer;
+}
+
+.t a.active {
+	cursor:default !important;
+}
+
+.navi {
+	margin-left:279px;
+	_margin-left:269px;
+}
+
+/* CSS sprite for the navigation */
+#t0 		  { margin-left:20px; _margin-left:10px;}
+#t0.active { background-position:-21px 0 !important; }
+#t0:hover  { background-position:-21px -200px; }
+#t0:active { background-position:-21px -301px; }
+
+#t1			{ background-position:-290px -100px; }
+#t1:hover 	{ background-position:-290px -200px; }
+#t1:active	{ background-position:-290px -301px; }
+#t1.active	{ background-position:-290px 0 !important; }
+
+#t2			{ background-position:-388px -100px; }
+#t2:hover 	{ background-position:-388px -200px; }
+#t2:active	{ background-position:-388px -301px; }
+#t2.active	{ background-position:-388px 0 !important; }
+
+#t3			{ background-position:-487px -100px; }
+#t3:hover 	{ background-position:-487px -200px; }
+#t3:active	{ background-position:-487px -301px; }
+#t3.active	{ background-position:-487px 0 !important; }
+
+.about_us {
+	float:left;
+	display:inline-block;
+	height:160px;
+	width:160px;
+	margin:0;
+}
+.about_us_text {
+	margin-left:20px;
+	margin-top:80px;
+	float: left;
+	display:inline-block;
+	height:30px;
+	width:400px;
+}
+.special_thanks {
+	font-size:70%;
+	float:left;
+	display: inline-block;
+	height:30px;
+	width:500px;
+}
+.clear {
+	padding-top:20px;
+	clear:both;
+}
+#alert {
+/*	display:none;*/
+	height:20px;
+	background:lightyellow;
+	border: 1px solid yellow;
+	font-style: italic;
+}
+#send_login_loading {
+	display:none;
+	padding-top:30px;
+	padding-bottom:20px;
+	text-align:center;
+}
+#send_create_user_loading {
+	display:none;
+	padding-top:110px;
+	padding-bottom:20px;
+	text-align:center;
+}
+#login_password{
+	display:none;
+}
+#top_loading {
+	text-align:center;
+	padding:20px;
+}
+#info {
+	font: italic normal normal 1em Arial, sans-serif;
+	color:lightgrey;
+	text-align:center;
+	width: 500px;
+	margin-top:20px;
+	margin-bottom:15px;
+	margin-left:35px;
+}
+#info strong {
+	color:gray;
+	font-weight: bold;
+}
+#forgot_password {
+	float:left;
+	margin-top:10px;
+	margin-bottom:10px;
+	font-size: 70%;
+	text-decoration: underline;
+	color:blue;
+}
+#forgot_password:hover {
+	text-decoration: underline;
+	font-weight: bold;
+	cursor:pointer;
+	color:black;
+}
+#faq {
+	color:gray;
+	width:530px;
+	height:405px;
+	overflow-y:auto;
+	overflow-x:hidden;
+}
+#tutorial {
+	color:gray;
+	width:530px;
+	height:405px;
+	overflow-y:auto;
+	overflow-x:hidden;
+	font-family:Arial, "MS Trebuchet", sans-serif;
+}
+.faq_div {
+	float:left;
+	width:100%;
+}
+.text_div {
+	float:left;
+	width:100%;
+	margin-bottom:20px;
+	font-family: Arial, "MS Trebuchet", sans-serif;
+}
+/*tutorial*/
+.itens{
+	font-weight:bold;
+	color:#d79de2;
+}
+.legenda{
+	font-weight:lighter;
+	font-style:italic;
+	text-align:center;
+	color:black;
+	font-size:11px;
+}
+a{
+	text-decoration:none;
+}
+a:link{
+	color: #55cccb;
+	font-weight:bold;
+}
+a:visited{
+	color:#55cccb;
+}
+a:hover{
+	color:#d79de2;
+	font-weight:bold;
+}
+a:focus{
+	color:#55cccb;;
+}
+
+
+</style>
+	
+<!--[if !IE]><!-->
+	<style type="text/css">
+	h1, h2 {
+		color:#009999;
+		float:left;
+		font-weight:normal;
+		letter-spacing:-.01em;
+		position:relative;
+		margin-top: 0px;
+		top: 0px;
+		right: 0px;
+		margin-bottom: 0px;
+		padding-right: 2px;
+	}
+	h1 {
+		font-size:230%;
+		color:#7F007F;
+		font-weight:bold;
+	}
+	h1 span, h2 span {
+		position:absolute;
+		display:block;
+		top:0;
+		left:0;
+		height:100%;
+		width:100%;
+		background:url(../img/gradient_1.png) repeat-x;
+		font-family: Arial, "MS Trebuchet", sans-serif;
+	}
+	h1 span {background:url(../img/gradient_2.png) repeat-x;}
+	* html h1 span {
+		background-color:#fff;
+		background-color:transparent;
+		background-image: url(none.gif);
+		filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="img/gradient_2.png", sizingMethod="scale");
+	}
+	* html h2 span{
+		background-color:#fff;
+		background-color:transparent;
+		background-image: url(none.gif);
+		filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="img/gradient_1.png", sizingMethod="scale");
+	}
+	</style>
+
+<!-- <![endif]-->
+
+<div id="alert">
+	<%= t.messages.alert %>
+</div>
+<!-- root element for everything -->
+<div id="content">
+	<div id="center">
+		<span id="logo">
+			<img src="../img/logo_home_650.gif" alt="Logo">
+		</span>
+		<span id="scrollcontainer">
+			<div id="top_loading">
+				<img src='../img/loading_kuni.gif'>
+			</div>
+			<div id="top">
+				<span id="login_fields">
+					<span><div class="title_form_view"><%= t.home.title_login %></div></span>
+					<span><form action="/login" method="POST">
+						<div><span class="fields"><input class="textlogin" name="login_user" id="login_user" type="text" value="<%= t.home.user_name %>" /></span><span id="status_login"></span><br></div>
+						<div><span class="fields">
+							<input class="textlogin" name="login_password" id="login_password_clear" type="text" value="<%= t.home.password %>" />
+							<input class="textlogin" name="login_password" id="login_password" type="password" value="" />
+							</span>
+							<span id="status_password">
+							</span>
+						</div>
+						<p>
+							<div>
+								<input id="send_login" class="textloginbutton" type="submit" value="<%= t.home.button_enter %> &rarr;">
+								<div id="send_login_loading"><img src='../img/loading_kuni.gif'></div>
+							</div>
+							<div><a id="forgot_password"><%= t.home.forgot %></a></div>
+						</p><br>
+						<select name="language">
+							<option value="pt">Português</option>
+						</select>
+					</form></span>
+				</span>
+				<span id="register_fields">
+					<span><div class="title_form_view"><%= t.home.title_register %></div></span>
+					<span><form action="/create_user" method="POST">
+						<div><span class="fields"><input class="textregister" id="reg_email" type="text" value="email" /></span><span class="status" id="status_email"></span></div>
+						<div><span class="fields"><input class="textregister" id="reg_user" type="text" value="<%= t.home.user_name %>" /></span><span class="status" id="status_user"></span></div>
+						<div>
+							<span class="fields"><input class="textregister" id="reg_password" type="password" value="" /></span>
+							<span class="fields"><input class="textregister" id="reg_password_clear" type="text" value="<%= t.home.password %>" /></span><span class="status" id="status_reg_password"></span>
+						</div>						
+						<div>
+							<span class="fields"><input class="textregister" id="reg_confirmpassword" type="password" value="" /></span>
+							<span class="fields"><input class="textregister" id="reg_confirmpassword_clear" type="text" value="<%= t.home.password_confirm %>" /></span><span class="status" id="status_reg_password_confirm"></span>
+						</div>
+						<div>
+							<input id="send_create_user" class="textregisterbutton" type="submit" value="<%= t.home.button_create_user %> &rarr;">
+							<div id="send_create_user_loading"><img src='../img/loading_kuni.gif'></div>
+						</div>
+						<div id="pre_token" style="display:none;"><%= session[:pre_token] %></div>
+					</form></span>
+				</span>
+
+			</div>
+			<div id="info">
+				<%= @info %> <br>
+			</div>
+			<div id="scroll">
+				<!-- scrollable items -->
+				<div id="tools">
+					<!-- what is -->
+					<div class="tool">
+						<div id="tutorial">
+							<!-- from javascript -->
+						</div>
+					</div>
+					<!-- how to -->
+					<div class="tool">
+						<div id="faq">
+							<span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=7Lb79SctlG3WMmEA50DPrCrDBIs7zSDtOPmjPOUHZ17d4Mk4kUyBnxZ4r"></script></span>
+							<!-- from javascript -->
+						</div>
+					</div>
+					<!-- about us -->
+					<div class="tool">
+						<div class="clear">
+							<span class="about_us"><img src="../img/us_tchatcho.gif"></span><span class="about_us_text"><%= t.home.about_tchatcho %></span>
+						</div><br>
+						<div class="clear">
+							<span class="about_us"><img src="../img/us_daniel.gif"></span><span class="about_us_text"><%= t.home.about_daniel %></span>
+						</div><br><br>
+						<div class="clear">
+							<span class="special_thanks"><%= t.home.special_thanks %></span>
+						</div>
+					</div>
+					<!-- contact -->
+					<div class="tool" style="background-image: url(../img/contact_home.gif);">
+						<div class="details">
+							<%= t.home.text_contact %>
+						</div>
+					</div>
+				</div>
+
+				<!-- thumbnails -->
+				<div id="thumbs" class="t">
+
+					<!-- intro page navi button -->
+					<a id="t0" class="active"></a>
+
+					<!-- scrollable navigator root element -->
+					<div class="navi">
+						<a style="display: none;"></a>
+						<a id="t1"></a>
+						<a id="t2"></a>
+						<a id="t3"></a>
+					</div>
+				</div>
+			</div>
+		</span>
+	</div>
+	<!-- required for IE6/IE7 -->
+	<br clear="all">
+	<div id="bottom">
+		<br>01/10 - kunigo.com
+	</div>
+</div>
+<script type="text/javascript">
+// $(document).ready(function() {
+	if ($("#alert").text() == "none"){
+		$("#alert").hide();
+	};
+	$("#send_login_loading").hide();
+	$("#send_create_user_loading").hide();
+
+		// initialize scrollable and return the programming API 
+		var api = $("#scroll").scrollable({ 
+		    items: '#tools', 
+		    size: 1, 
+		    clickable: false 
+		// use the navigator plugin 
+		}).navigator({api: true});
+
+		// this callback does the special handling of our "intro page" 
+		api.onStart(function(e, i) { 
+		    // toggle activity for the intro thumbnail 
+		    $("#t0").toggleClass("active", i == 0); 
+		}); 
+
+		// a dedicated click event for the intro thumbnail 
+		$("#t0").click(function() { 
+		    // seek to the beginning (the hidden first item) 
+		    $("#scroll").scrollable().begin(); 
+		});
+
+
+	//fill forms and back
+	if ($("#login_user").val() != "<%= t.home.user_name %>") {
+		if (!$("#login_user").hasClass("textlogin_edit")) {
+			$("#login_user").addClass("textlogin_edit");
+		}
+	}
+	$('#login_password').hide();
+	$('#login_password_clear').show();
+	$('#reg_password').hide();
+	$('#reg_password_clear').show();
+	$('#reg_confirmpassword').hide();
+	$('#reg_confirmpassword_clear').show();
+	
+	$("#login_user").focus(function(){if ($(this).val() == "<%= t.home.user_name %>"){$(this).val("");$(this).addClass("textlogin_edit")}});
+	$("#login_user").blur(function(){if ($(this).val() == "") {$(this).val("<%= t.home.user_name %>");$(this).removeClass("textlogin_edit")}});
+	$("#login_password_clear").focus(function(){
+		$("#login_password").addClass("textlogin_edit")
+	    $('#login_password_clear').hide();
+	    $('#login_password').show();
+	    $('#login_password').focus();
+	});
+	$("#login_password").blur(function(){
+	    if($('#login_password').val() == '') {
+			$("#login_password").removeClass("textlogin_edit")
+	        $('#login_password_clear').show();
+	        $('#login_password').hide();
+	    }
+	});
+	
+	$("#reg_email").focus(function(){if ($(this).val() == "email"){$(this).val("");$(this).addClass("textregister_edit")}});
+	$("#reg_email").blur(function(){if ($(this).val() == "") {$(this).val("email");$(this).removeClass("textregister_edit")}});
+	$("#reg_user").focus(function(){if ($(this).val() == "<%= t.home.user_name %>"){$(this).val("");$(this).addClass("textregister_edit")}});
+	$("#reg_user").blur(function(){if ($(this).val() == "") {$(this).val("<%= t.home.user_name %>");$(this).removeClass("textregister_edit")}});
+
+	$("#reg_password_clear").focus(function(){
+		$("#reg_password").addClass("textregister_edit")
+	    $('#reg_password_clear').hide();
+	    $('#reg_password').show();
+	    $('#reg_password').focus();
+	});
+	$("#reg_password").blur(function(){
+	    if($('#reg_password').val() == '') {
+			$("#reg_password").removeClass("textregister_edit")
+	        $('#reg_password_clear').show();
+	        $('#reg_password').hide();
+	    }
+	});
+	$("#reg_confirmpassword_clear").focus(function(){
+		$("#reg_confirmpassword").addClass("textregister_edit")
+	    $('#reg_confirmpassword_clear').hide();
+	    $('#reg_confirmpassword').show();
+	    $('#reg_confirmpassword').focus();
+	});
+	$("#reg_confirmpassword").blur(function(){
+	    if($('#reg_confirmpassword').val() == '') {
+			$("#reg_confirmpassword").removeClass("textregister_edit")
+	        $('#reg_confirmpassword_clear').show();
+	        $('#reg_confirmpassword').hide();
+	    }
+	});
+
+	$("select").change(function(){
+		window.location.replace("http://localhost:4567/lang/"+ $(this).val());
+	})
+	//forgot password
+	$("#forgot_password").click(function(){
+		$("#status_login").html("")
+		$("#status_password").html("")
+		// validate and process form here
+		var login_user = $("#login_user");
+		if (login_user.val() == "" || login_user.val() == "<%= t.home.user_name %>") {
+			$("#status_login").html("<img src='../img/reject.gif'>");
+			alert("<%= t.errors.empty_forgot %>");
+			return false;
+		}
+		$("#send_login_loading").show();
+		$("#send_login").hide();
+
+		var dataString = 'login_user='+ login_user.val();
+		$("#forgot_password").hide();
+		$.ajax({
+			type: "POST",
+			url: "/forgot_password",
+			data: dataString,
+			error: function(){
+				alert("<%= t.errors.error_forgot %>");
+				$("#send_login_loading").hide();
+				$("#send_login").show();
+				return false;
+			},
+			success: function() {
+				$("#send_login_loading").hide();
+				$("#send_login").show();
+				$("#forgot_password").show();
+				alert("<%= t.messages.password_sended %>")
+			}
+		});
+		return false;		
+	})
+	
+	//form section
+	//LOGIN
+	$("#login_password").keydown(function(e){
+		if (e.keyCode == 13) {
+			$("#send_login").click();
+			return false;
+		}
+	});
+	$("#send_login").click(function(){
+		var errors = "";
+		$("#status_login").html("")
+		$("#status_password").html("")
+		// validate and process form here
+
+		var login_user = $("#login_user");
+		if (login_user.val() == "" || login_user.val() == "<%= t.home.user_name %>") {
+			$("#status_login").html("<img src='../img/reject.gif'>");
+			errors += "<%= t.errors.empty_user %>";
+		}
+		var login_password = $("#login_password");
+		if (login_password.val() == "" || login_password.val() == "<%= t.home.password %>") {
+			$("#status_password").html("<img src='../img/reject.gif'>");
+			errors += "<%= t.errors.empty_password %>"
+		}
+		if (errors != "") {
+			alert(errors)
+			return false;
+		};
+		$("#send_login_loading").show();
+		$("#send_login").hide();
+
+		var dataString = 'login_user='+ login_user.val() + '&login_password=' + login_password.val();
+		$.ajax({
+			type: "POST",
+			url: "/login",
+			data: dataString,
+			error: function(){
+				alert("<%= t.errors.login_fail %>");
+				$("#send_login_loading").hide();
+				$("#send_login").show();
+				return false;
+			},
+			success: function() {
+				window.location.href = "/index";
+			}
+		});
+		return false;
+	});
+
+	//helper validator - email
+	function isValidEmailAddress(emailAddress) {
+		var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+		return pattern.test(emailAddress);
+	}
+
+	//CREATE USER
+	//test user name
+	not_allowed_user = false;
+	not_allowed_email = false;
+	not_match_password = false;
+	$("#reg_user").keyup(function(){
+		$(this).val($(this).val().replace(/[\s*]|@|&|%|#|!|:|;|,/g,""));
+		if ($(this).val() == '') {
+			$("#status_user").html("<img src='../img/reject.gif'>");
+			return false;
+		};
+		$.ajax({
+			type: "POST",
+			url: "/test_user",
+			data: 'user_to_test='+ $(this).val(),
+			success: function(data) {
+				if (data == 'k') {
+					$("#status_user").html("<img src='../img/accept.gif'>");
+					not_allowed_user = false;
+				} else {
+					$("#status_user").html("<img src='../img/reject.gif'>");
+					not_allowed_user = true;
+				}
+			}
+		});
+	});
+	$("#reg_user").keydown(function(){
+		$(this).val($(this).val().replace(/[\s*]|@|&|%|#|!|:|;|,/g,""));
+	});
+	$("#reg_email").keyup(function(){
+		if (!isValidEmailAddress($(this).val())) {
+			$("#status_email").html("<img src='../img/reject.gif'>");
+			return false;
+		};
+		$.ajax({
+			type: "POST",
+			url: "/test_email",
+			data: 'email_to_test='+ $(this).val(),
+			success: function(data) {
+				if (data == 'k') {
+					$("#status_email").html("<img src='../img/accept.gif'>");
+					not_allowed_email = false;
+				} else {
+					$("#status_email").html("<img src='../img/reject.gif'>");
+					not_allowed_email = true;
+				}
+			}
+		});
+	});
+	$("#reg_confirmpassword").keyup(function(){
+		if ($(this).val() != $("#reg_password").val()) {
+			// $("#status_reg_password").html("<img src='../img/reject.gif'>");
+			$("#status_reg_password_confirm").html("<img src='../img/reject.gif'>");
+			not_match_password = true;
+			return false;
+		} else {
+			$("#status_reg_password").html("<img src='../img/accept.gif'>");
+			$("#status_reg_password_confirm").html("<img src='../img/accept.gif'>");
+			not_match_password = false;
+		}
+	});
+	$("#send_create_user").click(function(){
+		var errors = "";
+
+		var reg_email = $("#reg_email");
+		if (reg_email.val() == "" || reg_email.val() == "email") {
+			$("#status_email").html("<img src='../img/reject.gif'>");
+			errors += "<%= t.errors.email_is_required %>"
+		};
+
+		var reg_user = $("#reg_user");
+		if (reg_user.val() == "" || reg_user.val() == "<%= t.home.user_name %>") {
+			$("#status_user").html("<img src='../img/reject.gif'>");
+			errors += "<%= t.errors.user_is_required %>"
+		}
+		if (not_allowed_email) {
+			errors += '<%= t.errors.email_is_taken %>';
+		}
+		if (not_allowed_user) {
+			errors += '<%= t.errors.user_is_taken %>';
+		}
+		var reg_password = $("#reg_confirmpassword");
+		if (reg_password.val() == "" || reg_password.val() == "<%= t.home.password %>") {
+			$("#status_reg_password").html("<img src='../img/reject.gif'>");
+			$("#status_reg_password_confirm").html("<img src='../img/reject.gif'>");
+			errors += '<%= t.errors.password_is_required %>'
+		}
+		if (reg_password.val() != $("#reg_password").val()) {
+			// $("#status_reg_password").html("<img src='../img/reject.gif'>");
+			$("#status_reg_password_confirm").html("<img src='../img/reject.gif'>");
+			errors += '<%= t.errors.password_dont_match %>'
+		}
+		if (errors != "") {
+			alert(errors)
+			return false;
+		};
+		$("#send_create_user_loading").show()
+		$("#send_create_user").hide();
+
+		var dataString = 'reg_email='+ reg_email.val() + '&reg_user=' + reg_user.val().replace(/\s|@|&|%|#|!|:|;|,/i,"") + '&reg_password=' + reg_password.val() + '&pre_token=' + $("#pre_token").text();
+		$.ajax({
+			type: "POST",
+			url: "/create_user",
+			data: dataString,
+			error: function(){
+				alert("<%= t.errors.generic_error %>");
+				$("#send_create_user_loading").hide()
+				$("#send_create_user").show();
+				return false;
+			},
+			success: function() {
+				window.location.href = "/index";
+			}
+		});
+		return false;
+	});
+	$.ajax({
+		url: "<%= t.home.faq_link %>",
+		success: function(data) {$("#faq").append(data)}
+	});
+	$.ajax({
+		url: "<%= t.home.tutorial_link %>",
+		success: function(data) {$("#tutorial").html(data)}
+	});
+	
+	$("#top_loading").slideUp();
+	$("#top").slideDown();
+// });
+</script>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-12768881-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body></html>

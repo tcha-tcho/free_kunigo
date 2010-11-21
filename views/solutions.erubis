@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<div id="solutions">
+	<% if !@is_template %>
+		<% if !@guest %>
+			<% if !@closed or @kuni_userid == @userid %>
+				<div class="solution_form">
+					<div>
+						<div class="btn bold" title="bold"></div><div class="btn italic"></div><div class="btn underline"></div><div class="btn link"></div><div class="btn quote"></div>
+						<div class="btn code"></div><div class="btn image"></div><div class="btn usize"></div><div class="btn dsize"></div><div class="btn nlist"></div>
+						<div class="btn blist"></div><div class="btn back"></div><div class="btn forward"></div>
+						<div>
+							<textarea name="bbcode" id="solution_form_text" class="solution_form_text" rows="3" style="font-size:150%;" style="width:97%;"></textarea>
+						</div>
+					</div>
+					<div id="solution_form_send" class="button">
+						<div id="unlock-slider-wrapper" class="ui-state-default ui-corner-all">
+		        			<div id="unlock-slider"><div id="unlock-handle"></div></div><div id="unlock-text"><%= t.solutions.slider %></div>
+							<div class="token"><%= session[:token] %></div>
+		        		</div>
+		        	</div>
+					<div class="preview" style="margin-top:10px;font-size:120%;"></div>
+				</div>
+			<% else %>
+				<div class="alert"><span class='lock'/><strong><%= t.solutions.closed %></strong></div>
+			<% end %>
+			<% if @in_sync %>
+				<a id="goto<%= @kuni_id %>" class="go_to_original"><%= t.solutions.go_to_original %></a>
+			<% end %>
+		<% else %>
+			<%= t.messages.not_user %>
+		<% end %>
+		<% if !@solutions.nil? %>
+			<% @solutions.each do |solution| %>
+			<div id="ss<%= solution.id %>" class="solution_line">
+				<div class="solution_author_this<%= 'not' if !solution.solve %>solve"><%== solution.included_by %> <span class="timestamps"><%= solution.created_at %></span></div>
+				<div class="solution_message"><%== solution.message %></div>
+				<div class="solution_links">
+					<% solution.links.each do |link| %>
+						&bull;&nbsp;<a href="<%== link %>" target="_blank"><%== link %></a><br>
+					<% end %>
+				</div>
+				<div class="solution_buttons">
+				<% if @kuni_userid == @userid and !@in_sync %>
+					<input type="button" class="delete_solution" value="<%= t.solutions.delete %>" id="s<%= solution.id %>">&nbsp;&nbsp;
+					<input type="button" class="solved" value="<%= t.solutions.this_solve %>" id="sd<%= solution.id %>">&nbsp;&nbsp;
+				<% end %>
+				</div>
+			</div>
+			<% end %>
+		<% end %>
+	<% else %>
+		<div class="alert"><%= t.solutions.is_template %></div>
+	<% end %>
+	<br><br>
+</div>
+</body></html>

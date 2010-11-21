@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+</head>
+<body>
+	<div class="tool" style="background-image: url(../img/contact_home.gif);">
+		<div class="details">
+			<%= t.home.text_contact %>
+		</div>
+	</div>
+</body>
+</html>

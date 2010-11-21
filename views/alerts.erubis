@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<div id="all_title" class="watchedTheme" style="background:url(./img/alert_thumb.gif) no-repeat top right;">
+	<div class="idea_subject_viewer">
+		<span class="idea_category_viewer"></span>
+	</div><br><br>
+	<div class="idea_title_viewer">
+		<h2><%= t.alerts.alerts %><span></span></h2>
+	</div>
+	<br>
+	<div class="ui-tabs-panel" style="overflow:auto;">
+		<% @user.log.reverse.each do |log| %>
+			<div class="alert_line new <%= 'message' if log[0] == 9 %><%= 'bulk_message' if log[0] == 11 %>" style="background:url(./img/alert_<%= log[0] %>.gif) no-repeat top right;">
+				<span class="timestamps"><%= log[1] %></span><br>
+				<div><%= logg_process(log) %></div>
+			</div>
+		<% end %>
+		<% @user.log_old.reverse.each do |log_old| %>
+			<div class="alert_line old <%= 'message' if log_old[0] == 9 %><%= 'bulk_message' if log_old[0] == 11 %>" style="background:url(./img/alert_<%= log_old[0] %>.gif) no-repeat top right;">
+				<span class="timestamps"><%= log_old[1] %></span><br>
+				<div><%= logg_process(log_old) %></div>
+			</div>
+		<% end %>
+		<% @user.log_trash.reverse.each do |log_trash| %>
+			<div class="alert_line trash <%= 'message' if log_trash[0] == 9 %><%= 'bulk_message' if log_trash[0] == 11 %>" style="background:url(./img/alert_<%= log_trash[0] %>.gif) no-repeat top right;">
+				<span class="timestamps"><%= log_trash[1] %></span><br>
+				<div><%= logg_process(log_trash) %></div>
+			</div>
+		<% end %>
+		<% @user.log_old.concat @user.log %>
+		<% @user.log = nil %>
+		<% @user.save %>
+	</div>
+</div>
+</body></html>

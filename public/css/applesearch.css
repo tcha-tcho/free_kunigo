@@ -1,0 +1,46 @@
+#applesearch .sbox_l  {
+	background: white url('../img/srch_l.gif') no-repeat top left;
+	float: left;
+	width: 19px; height: 19px;
+}
+
+#applesearch .sbox_r  {
+	background: white url('../img/srch_r.gif') no-repeat top left;
+	float: left;
+	width: 19px; height: 19px;
+}
+
+#applesearch .sbox input {
+	background: white url('../img/srch_bg.gif') repeat-x top left;
+	float: left;
+	border: 0;
+	height: 19px; width: 45px;
+	padding: 3px;
+	font: 11px/13px arial;
+	color: #000;
+}
+
+#content {
+	clear: both;
+}
+#applesearch2 .sbox_l  {
+	background: white url('../img/srch_l.gif') no-repeat top left;
+	float: left;
+	width: 19px; height: 19px;
+}
+
+#applesearch2 .sbox_r  {
+	background: white url('../img/srch_r.gif') no-repeat top left;
+	float: left;
+	width: 19px; height: 19px;
+}
+
+#applesearch2 .sbox input {
+	background: white url('../img/srch_bg.gif') repeat-x top left;
+	float: left;
+	border: 0;
+	height: 19px; width: 45px;
+	padding: 3px;
+	font: 11px/13px arial;
+	color: #000;
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+	<br>
+<div class="clear_field">
+	<!-- <span><div class="title_form_view"><%= t.home.title_register %></div></span> -->
+	<div id="register_fields">
+		<div class="clear_field">
+			<span class="fields"><input class="textregister" id="reg_email" type="text" value="email" /></span><span class="status" id="status_email"></span>
+		</div>
+		<div class="clear_field">
+			<span class="fields"><input class="textregister" id="reg_user" type="text" value="<%= t.home.user_name %>" /></span><span class="status" id="status_user"></span>
+		</div>
+		<div class="clear_field">
+			<span class="fields"><input class="textregister" id="reg_password" type="password" value="" /></span>
+			<span class="fields"><input class="textregister" id="reg_password_clear" type="text" value="<%= t.home.password %>" /></span><span class="status" id="status_reg_password"></span>
+		</div>			
+		<div class="clear_field">
+			<span class="fields"><input class="textregister" id="reg_confirmpassword" type="password" value="" /></span>
+			<span class="fields"><input class="textregister" id="reg_confirmpassword_clear" type="text" value="<%= t.home.password_confirm %>" /></span><span class="status" id="status_reg_password_confirm"></span>
+		</div>
+		<div class="clear_field">
+			<input id="send_create_user" class="textregisterbutton" type="submit" value="<%= t.home.button_create_user %> &rarr;">
+			<div id="send_create_user_loading"><img src='../img/loading_kuni.gif'></div>
+		</div>
+		<div id="pre_token" style="display:none;"><%= session[:pre_token] %></div>
+	</div>
+</div>
+<div id="selected_samples" class="clear_field">
+	<div class="selected_title"><strong><%= t.home.selecteds %></strong></div>
+		<% if !@selecteds.nil? %>
+			<% @selecteds.each do |kuni| %>
+				<%# kuni = Kuni.find_by_id(kuni_selected.kuni_id) %>
+				<% if !kuni.nil? %>
+					<li id="<%= kuni.id %>" class="kuni_unselected">
+						<div class="kuni_<%= kuni.sharing_type %>">
+							<div class="r_box2">
+							   <div class="r_top2"><div></div></div>
+							      <div class="r_content2">
+									<span>
+										<span class="idea_container">
+											<% if kuni.template %>
+												<img class="idea_title" src="./img/bar_watched_template.gif">
+											<% else %>
+												<img class="idea_title" src="./img/bar_watched_<%= kuni.cache %>.gif">
+											<% end %>
+											<% if !kuni.image.nil? %>
+												<img class="kuni_images" src="<%= kuni.image %>">
+											<% end %>
+												<br><span class="idea_subject"><%= '<strong>TEMPLATE</strong><br>' if kuni.template %></span><%== kuni.title %></span>
+										</span>
+									</span>
+							      </div>
+							   <div class="r_bottom2"><div></div></div>
+							</div>
+						</div>
+					</li>
+				<% end %>
+			<% end %>
+		<% end %>
+</div>
+</body></html>

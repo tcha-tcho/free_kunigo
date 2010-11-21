@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+	<br>
+	<span id="login_fields">
+		<!-- <span><div class="title_form_view"><%= t.home.title_login %></div></span> -->
+		<span><form action="/login" method="POST">
+			<div><span class="fields"><input class="textlogin" name="login_user" id="login_user" type="text" value="<%= t.home.user_name %>" /></span><span id="status_login"></span><br></div>
+			<div><span class="fields">
+				<input class="textlogin" name="login_password" id="login_password_clear" type="text" value="<%= t.home.password %>" />
+				<input class="textlogin" name="login_password" id="login_password" type="password" value="" />
+				</span>
+				<span id="status_password">
+				</span>
+			</div>
+			<p>
+				<div>
+					<input id="send_login" class="textloginbutton" type="submit" value="<%= t.home.button_enter %> &rarr;">
+					<div id="send_login_loading"><img src='../img/loading_kuni.gif'></div>
+				</div>
+				<div><a id="forgot_password"><%= t.home.forgot %></a></div>
+			</p>
+		</form></span>
+	</span>
+	<div style="clear:both;">
+		<br>
+		<select name="language" id="select_language">
+			<option value="pt">Português</option>
+		</select>
+		<br><br><br>
+		<p><input class="button_home" type="button" value=".:HOME:." id="home_button"></p>
+		<p><input class="button_home" type="button" value=".:COMO USAR:." id="howto_button"></p>
+		<p><input class="button_home" type="button" value=".:FAQ:." id="faq_button"></p>
+		<p><input class="button_home" type="button" value=".:CONTATO:." id="contact_button"></p>
+	</div>
+</body></html>

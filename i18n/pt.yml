@@ -1,0 +1,274 @@
+home:
+  title_login: L<br>O<br>G<br>I<br>N
+  title_register: R<br>E<br>G<br>I<br>S<br>T<br>R<br>O
+  button_enter: Entre
+  button_create_user: Criar usuário
+  text_contact: Entre em contato conosco pelo email <strong>kunigo@kunigo.com.br</strong>. Se for falar sobre um Kuni em especial, não esqueça de enviar o ID dele.
+  error_empty_user: Usuário não pode ficar vazio
+  about_tchatcho: <strong>Tcha-Tcho</strong><br>desenvolvimento e conceito original<br>me@tcha-tcho.com
+  about_daniel: <strong>Daniel Roda</strong><br>comunicação e "awesome level"<br>dcroda2@terra.com.br
+  special_thanks: Esse trabalho não teria acontecido sem o apoio da <strong>equipe de Arte do Estadão</strong>!
+  user_name: apelido ou email
+  email: e-mail
+  password: senha
+  password_confirm: confirmar senha
+  kunis: Kunis
+  info: <strong>Uma forma fácil de fazer projetos em grupo</strong>.<br><div style="font-size:80%">Atualmente somos <strong>%1 mentes</strong> trabalhando em <strong>%2 projetos</strong>.</div> 
+  forgot: esqueci a senha
+  faq_link: faq/faq_pt.html
+  howto_link: howto/howto_pt.html
+  home_link: home/home_pt.html
+  selecteds: Kunis selecionados
+  selected_kuni: 4bb1f394f0c4d82b1f000005;4bb1487ef0c4d80694000003;4bbb9006f0c4d81e59000008
+
+email:
+  adress: kunigo@kunigo.com.br
+  welcome_subject: -> %1 se une ao Kunigo!
+  welcome: <h1>Oi %1!</h1> <br>Bem vindo ao Kunigo! Você agora pode participar de nossa rede de ideias! <br><br><br> <h3>Tcha-Tcho e Daniel Roda</h3>
+  forgot_subject: %1, esqueceu sua senha do Kunigo, hein? ¬¬
+  forgot: <h1>Oi %1!</h1> <br> Para reaver sua senha no Kunigo, clique nesse link <br> <a href="%2">Link que se autodestruirá impiedosamente da próxima vez que você logar</a> <br><br><br> Até mais! <br> <h3>Tcha-Tcho e Daniel Roda</h3>.
+
+index:
+  guest: visitante
+  login: Login
+  register: Registro
+  button_go: Procurar
+  radio_ideas: Ideias (Kunis)
+  radio_tasks: Tarefas
+  radio_mytasks: Minhas tarefas
+  radio_templates: Templates
+  radio_users: Usuários
+  close: Fechar
+  my: Meus
+  showing: mostrando
+  create_button: Criar novo
+  create_category: Categoria
+  create_title: Qual sua idéia?
+  create_public: Público
+  create_private: Privado
+  create_description: Descrição
+  create_homepage: Homepage (opcional)
+  create_cancel: Cancelar
+  create_create: Criar!
+  watched: Favoritos
+  kgpl: Licença Pública
+  apply: Autorizar nesse Kuni
+  kgpl_link: kgpl/kgpl_pt.html
+  tips_link: tips/tips_pt.html
+  see_all: últimos 100
+  see_member: sou membro
+
+user:
+  opened: Um resumão do seu perfil
+  kunis: Número de Kunis
+  label_mail: Alterar e-mail
+  label_pass: Alterar password
+  actual_pass: Password atual
+  new_pass: Novo password
+  confirm_pass: Confirme novo password
+  change_email: Esse e-mail é usado para recuperar sua conta, caso perca a senha
+  change: Alterar dados
+  password_changed: Password alterado com sucesso!
+  email_changed: Email alterado com sucesso!
+  private_msg: Enviar um alert privado para o usuário
+  solutions_solved: Soluções aceitas<br>por outros
+  public_kunis: Kunis<br>Públicos
+  listed: Vezes<br>listado
+  last_login: Foi a última logada
+
+comments:
+  send_commentary: <strong>ARRASTE</strong><br>PARA ENVIAR
+  exlude_comment: EXCLUIR
+  comments_closed: Área de comentários fechada
+  close: Fechar área de comentários
+
+details:
+  created_at: Criado
+  by: Por
+  users_auth: Usuários autorizados
+  users_auth_ex: ex. usuário1 ou usuário1,usuário2,usuário3
+  participants: Usuários participantes
+  change_permissions: Alterar permissões
+  send_invites: Convidar usuários para participar?
+  invites_sended: Convites enviados! =)
+  save: Salvar
+  saved: Suas alterações foram salvas!  =)
+  image_saved: Seu Kuni vai receber essa imagem!  =)
+  url_image: Aplicar
+  url_image_label: Aplicar imagem no Kuni <span class="details_small">(Use imagens com até 300px)</span><br>
+  save_tags: Salvar tags
+  save_tags_label: TAGS <span class="details_small">(Ex. tag1,tag2,tag3)</span><br>
+  tags_saved: tags salvas!
+
+list_of_kunis:
+  publics: PÚBLICOS
+  privates: PRIVADOS
+  templates: TEMPLATES
+
+network:
+  title: Tarefas sincronizadas.<br><span style="font-size:70%;">DENTRO DELAS O KUNI PÚBLICO ONDE ESTÁ</span>
+  full_copy: Cópias completas do Kuni
+  nobody: Ninguém está sincronizado com essa tarefa.... ainda! =)
+
+read_kuni:
+  close: fechar 
+  fork: copiar 
+  delete: deletar 
+  watch: favoritar
+  remove: remover 
+  make_public: tornar público
+  details: Detalhes 
+  tasks: Tarefas 
+  network: Rede 
+  comments: Comentários 
+  details: Detalhes 
+  add_p_list: Adicionar à sua lista de pessoas 
+  in_list: Esta pessoa está em sua lista 
+  bulk_select: Você pode selecionar mais de um item arrastando de um para o outro ou clicando com Ctrl/Command (Mac).
+  peoples: Pessoas
+  add_member: tô dentro
+  delete_member: tô fora
+  nobody: sem participantes
+  members: Membros
+  send_alert: enviar alert para todos
+  message_sended: Mensagem enviada
+
+search:
+  results: Resultados
+  privates: PRIVADOS PERMITIDOS
+  publics: PUBLICOS
+  tags: POR TAGS
+
+alerts:
+  opened: Lembre-se que os Alerts serão deletados pelo sistema
+  alerts: Alerts
+  a0: <a class="%2">%3</a> postou uma solucão na tarefa do seu <span class="%1">Kuni.</span>
+  a1: <a class="%2">%3</a> postou um comentário no seu <span class="%1">Kuni.</span>
+  a2: <a class="%2">%3</a> copiou uma ou mais tarefas de seu <span class="%1">Kuni.</span>
+  a3: <a class="%2">%3</a> copiou o seu <span class="%1">Kuni.</span>
+  a4: <a class="%2">%3</a> enviou um convite para participar de seu <span class="%1">Kuni.</span> privado
+  a5: <a class="%2">%3</a> deletou a tarefa que você estava sincronizado, mas nada tema! Copiamos ela para seu <span class="%1">Kuni.</span>
+  a6: <a class="%2">%3</a> resolveu a tarefa que você esta sincronizado... <span class="%1">yeeaahhh</span>
+  a7: <a class="%2">%3</a> deletou o <span class="%1">Kuni</span> que você favoritou... vamos tirar ele de sua lista.
+  a8: <a class="%2">%3</a> deletou a cópia original do seu <span class="%1">Kuni</span>. Copiamos as tarefas sincronizadas para você.
+  a9: <a class="%2">%3</a> mandou uma menssagem <br><span class="txt_msg">%1</span>
+  a10: <div class="welcome_alert"></div>Olá <a class="%2">%3</a>! Bem-vindo ao sistema de alerts. Eles servem para avisar quando alguma coisa aconteceu ou algum outro usuário lhe mandou uma mensagem.
+  a11: <a class="%2">%3</a> comunica aos membros do seu <span class="%4">Kuni.</span><br><span class="txt_msg bulk_msg">%1</span>
+
+solutions:
+  create_solution: Criar solução
+  save: ENVIAR SOLUÇÃO
+  link: algum link?
+  delete: deletar
+  this_solve: essa resolve!
+  download: baixar arquivo
+  solved: Parabéns! Mais uma tarefa concluída!
+  is_template: Templates são guias - e suas tarefas não podem ser solucionadas. Copie esse template para poder solucionar tarefas.
+  closed: Tarefa blindada para soluções públicas
+  slider: <strong>ARRASTE</strong><br>PARA ENVIAR
+  go_to_original: Abrir o Kuni original
+
+tasks:
+  create_button: Criar tarefa
+  showing: mostrando
+  create_category: Categoria
+  create_title: Título
+  create_description: Criar nova tarefa...
+  create_cancel: Cancelar
+  create_send: Criar tarefa
+  delete_task: deletar
+  broke_sync: quebrar sincronia
+  change: mudar
+  closed: blindagem
+  is_done: concluir
+  select_all: Selecionar tudo?
+  solutions_button: SOLUÇÕES
+  task_copied: A tarefa foi copiada para Kuni ID 
+  sync_broked: A sincronia foi rompida!
+  in_sync: SINCRONIZADA
+  sync_is_broken: SINCRONIA QUEBRADA
+  sync_is_broken_message: A sincronia foi quebrada. =( Talvez a tarefa original tenha sido deletada, clique em "quebrar sincronia" ou "deletar" para começar ela de novo.
+
+errors:
+  empty_user: Usuário não pode ficar vazio\n
+  empty_password: Password não pode ficar vazio\n 
+  email_is_required: O campo email é obrigatório\n 
+  empty_forgot: Por favor, preencha o campo de apelido com seu nome de usuário ou seu e-mail\n 
+  error_forgot: Houve algum problema... talvez o usuário ou o email cadastrado não estejam corretos\n 
+  user_is_required: O campo apelido é obrigatório\n 
+  email_is_taken: Este email já está em uso\n 
+  user_is_taken: Este apelido já existe\n 
+  password_is_required: O campo password é requerido\n 
+  password_dont_match: Os campos de password precisam ser idênticos\n 
+  field_is_empty: O campo está vazio.\n 
+  generic_error: Humm... algo saiu errado... Tente de novo! =)
+  permissions_are_equal: As novas permissões são idênticas as antigas! ¬¬
+  title_is_required: Este campo é obrigatório!\n
+  there_is_another: Algum erro ocorreu, é possível que esse Kuni já esteja na sua lista...
+  present_in_mylist: Tá maluco? Esse Kuni é seu e já está na lista dos seus Kunis!
+  invalid_id: Humm, será que esse ID é bom? O ID é uma sequência de numeros e letras... sem o 'ID' na frente!
+  invalid_link: Esse link não está ok... vai ver falta um http:// ou alguma outra coisa...
+  not_owner: Desculpe, mas algo aconteceu.. se o Kuni não for seu, é só *copiar* para editá-lo! ;)
+  permission_refused: Parece que o usuário revogou sua permissão de ver o Kuni, desculpe... =S
+  read_error: Este Kuni pode ser privado ou ter sido deletado...  entre e tente depois! =)
+  login_fail: O login não foi possível.\nVocê pode usar o email do lugar do apelido se precisar! =)
+  password_wrong: Pode ser que o password atual não esteja correto. Cuidado com o Caps Lock!
+  email_incorrect: Email incorreto
+  incorrect_data: Algo deu errado, talvez o email ou o nome do usuário não esteja igual ao da conta...
+  duplicated_user: Algo deu errado, talvez esse usuário já esteja na sua lista de pessoas...
+
+messages:
+  posted: Postado!
+  comment_deleted: Comentário deletado!
+  created: Criado!
+  changed: Alterado!
+  loading: carregando...
+  sending: enviando...
+  watched: Favoritado!
+  fork_created: Pronto! A cópia já está em sua lista!
+  watch_created: Kuni inserido em sua lista de Favoritos!
+  optional: opcional
+  deleted: Deletado!
+  task_created: Tarefa criada!
+  task_deleted: Tarefa deletada!
+  task_closed: Opção "tire essa gente daqui" alterada!
+  task_done: Conclusão alterada!
+  searched: Você pode clicar direto nos resultados!
+  removed: Removido!
+  make_public: Parabéns! Agora podemos todos ajudá-lo! =)
+  confirm_make_public: Retirar essa tarefa do ambiente privado e permitir acesso público?
+  confirm_delete: Tem certeza que deseja deletar o Kuni? Pense bem, NÃO HÁ UNDO para isso.
+  confirm_delete_task: Deletando a tarefa as soluções serão apagadas também... prosseguir?
+  confirm_remove: Remover o Kuni de seus favoritos?
+  since: INGRESSOU 
+  alert: Agora para aderir a um Kuni basta clicar em "tô dentro" ;-). E para ver todos os Kunis é só "ver todos" no campo de busca!
+  password_sended: Seu password foi enviado para seu e-mail... \n\nmas lembre-se que se o e-mail cadastrado for ruim não temos como recuperar sua senha! *_*
+  link_destroyed: Desculpe mas ninjas destruíram completamente esse link. O que sobrou não foi suficiente para montar uma página de novo...
+  member_added: Você é um membro desse Kuni
+  member_deleted: Você não é mais um membro desse Kuni
+  not_allowed: Desculpe, ao que parece você não está logado
+  not_user: Participação reservada para usuários
+  not_found: Não encontramos esse =(, será que está correto?
+
+empty_lists:
+  my: Sua lista pessoal está vazia. Você pode <strong class='strong_list'>criar um novo Kuni</strong> clicando em "Criar novo". Daí é só criar ou buscar tarefas para ele.
+  watched: Sua lista de Favoritos está vazia. Você pode <strong class='strong_list'>buscar</strong> e clicar em <strong class='strong_list'>Favoritar</strong> para ficar de olho em alguns Kunis.
+  viewer: Este é seu local de visualização. Aqui seus projetos e o de outras pessoas serão abertos.<strong class='strong_list'>Dê um clique</strong> em qualquer projeto em suas listas.
+  go_view: abrir
+  open_with_id: Abrir Kuni pelo ID
+
+timestamps:
+  t1: em um DeLorean
+  t2: agora mesmo
+  t3: há uns segundos
+  t4: há um minuto
+  t5: há %CT% minutos
+  t6: há cerca de uma hora 
+  t7: há %CT% horas atrás
+  t8: ontem
+  t9: há %CT% dias
+  t10: no mês passado
+  t11: há %CT% meses atrás
+  t12: no ano passado
+  t13: há %CT% anos
+  t14: há bué tempo

@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+
+<br><div id="search_results_title"><%= t.search.results %></div><br>
+<% if !@results.nil? %>
+	<% if @type == 'kuni' %>
+		<div id='search_label'><%= t.search.tags %></div><br>
+		<% @results_tags.each do |item| %>
+			<div id="kuni" class="search_unselected">
+				<div class="search_result_item" id="se<%= item.id %>">
+					<span class="search_result_<%= 'non' if item.cache < 100 %>complete"><%== item.title %></span>
+				</div>
+			</div><hr>
+		<% end %>
+		<div id='search_label'><%= t.search.publics %></div><br>
+		<% @results.each do |item| %>
+			<div id="kuni" class="search_unselected">
+				<div class="search_result_item" id="se<%= item.id %>">
+					<span class="search_result_<%= 'non' if item.cache < 100 %>complete"><%== item.title %></span>
+				</div>
+			</div><hr>
+		<% end %>
+	<% end %>
+	<% if @type == 'all' or @type == 'member' %>
+		<div id='search_label'><%= t.search.publics %></div><br>
+		<% @results.each do |item| %>
+			<div id="kuni" class="search_unselected">
+				<div class="search_result_item" id="se<%= item.id %>">
+					<% if item.template %>
+						<span class="search_result_template"><%== item.title %></span>
+					<% else %>
+						<span class="search_result_<%= 'non' if item.cache < 100 %>complete"><%== item.title %></span>
+					<% end %>
+				</div>
+			</div><hr>
+		<% end %>
+	<% end %>
+	<% if @type == 'task' %>
+		<% @results.each do |item| %>
+			<div id="task" class="search_unselected">
+				<div class="search_result_item" id="se<%= item.id %>">
+					<span class="search_result_<%= 'non' if !item.is_done %>complete"><%== item.title %></span>
+				</div>
+			</div><hr>
+		<% end %>
+	<% end %>
+	<% if @type == 'mytasks' %>
+		<% @results.each do |item| %>
+			<div id="task" class="search_unselected">
+				<div class="search_result_item" id="se<%= item.id %>">
+					<span class="search_result_<%= 'non' if !item.is_done %>complete"><%== item.title %></span>
+				</div>
+			</div><hr>
+		<% end %>
+	<% end %>
+	<% if @type == 'template' %>
+		<div id='search_label'><%= t.search.publics %></div><br>
+		<% @results.each do |item| %>
+			<div id="kuni" class="search_unselected">
+				<div class="search_result_item" id="se<%= item.id %>">
+					<span class="search_result_template"><%== item.title %></span>
+				</div>
+			</div><hr>
+		<% end %>
+	<% end %>
+	<% if @type == 'user' %>
+		<% @results.each do |item| %>
+			<div id="user" class="search_unselected">
+				<div class="search_result_item" id="se<%= item.id %>">
+					<span class="search_result_user"><%== item.name %></span>
+				</div>
+			</div><hr>
+		<% end %>
+	<% end %>
+<% end %>
+</body></html>
